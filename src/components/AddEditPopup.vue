@@ -2,9 +2,7 @@
   <v-dialog v-model="showDialog" scrollable>
     <v-card rounded>
       <v-row class="justify-center">
-        <v-card-title class="text-h5" v-if="add">
-          Add Meeting
-        </v-card-title>
+        <v-card-title class="text-h5" v-if="add"> Add Meeting </v-card-title>
       </v-row>
       <v-divider />
 
@@ -29,7 +27,15 @@
         </v-text-field>
         <v-text-field
           v-model="password"
-          label="Meeting Password"
+          label="Meeting Password (optional)"
+          dense
+          outlined
+          clearable
+        >
+        </v-text-field>
+        <v-text-field
+          v-model="username"
+          label="Your Meeting Username (optional)"
           dense
           outlined
           clearable
@@ -47,7 +53,9 @@
         </v-tooltip>
         <v-spacer></v-spacer>
         <v-btn color="blue darken-1" text @click="exit()">Close</v-btn>
-        <v-btn color="blue darken-1" text @click="exit()">Save</v-btn>
+        <v-btn color="blue darken-1" text @click="add ? addItem : editItem"
+          >Save</v-btn
+        >
       </v-card-actions>
     </v-card>
   </v-dialog>
@@ -58,12 +66,13 @@ export default {
   name: "AddEditPopup",
   props: {
     add: { type: Boolean, default: true },
-    showDialog: { type: Boolean, default: false }
+    showDialog: { type: Boolean, default: false },
   },
   data: () => ({
     name: null,
     id: null,
-    password: null
+    password: null,
+    username: null,
   }),
   methods: {
     exit() {
@@ -73,8 +82,20 @@ export default {
       this.name = null;
       this.id = null;
       this.password = null;
-    }
-  }
+    },
+    addItem() {
+      const itemData = {
+        name: this.name,
+        id: this.id,
+      };
+      if (this.password) itemData.pwd = this.password;
+      if (this.username) itemData.uname = this.username;
+      this.$store.commit("addItem", itemData);
+      this.clearFields();
+      this.exit();
+    },
+    editItem() {},
+  },
 };
 </script>
 
