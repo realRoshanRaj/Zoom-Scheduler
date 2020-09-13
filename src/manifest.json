@@ -1,8 +1,8 @@
 {
   "manifest_version": 2,
-  "name": "__MSG_extName__",
+  "name": "Zoom Scheduler",
   "homepage_url": "http://localhost:8080/",
-  "description": "A Vue Browser Extension",
+  "description": "Helps you organize your Zoom Meetings or Zoom Classes",
   "default_locale": "en",
   "permissions": [
     "activeTab",
@@ -23,14 +23,10 @@
   },
   "browser_action": {
     "default_popup": "popup.html",
-    "default_title": "__MSG_extName__",
+    "default_title": "Zoom Scheduler",
     "default_icon": {
       "19": "icons/19.png",
       "38": "icons/38.png"
     }
-  },
-  "options_ui": {
-    "page": "options.html",
-    "browser_style": true
   }
 }

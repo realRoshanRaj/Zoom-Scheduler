@@ -1,5 +1,15 @@
 <template>
   <v-app>
+    <nav>
+      <v-app-bar dense>
+        <v-toolbar-title>Zoom Scheduler</v-toolbar-title>
+        <v-spacer></v-spacer>
+
+        <v-btn icon @click="$forceUpdate">
+          <v-icon>mdi-reload</v-icon>
+        </v-btn>
+      </v-app-bar>
+    </nav>
     <v-container fluid>
       <v-row justify="center">
         <ItemList />
@@ -44,7 +54,7 @@
               color="blue lighten-3"
               v-bind="attrs"
               v-on="on"
-              @click="$store.commit('changeSortMode')"
+              @click="$store.dispatch('changeAndRefreshSort')"
             >
               <v-icon v-if="getSortMode == 'A-Z'"
                 >mdi-sort-alphabetical-ascending</v-icon
@@ -58,9 +68,10 @@
 
       <AddEditPopup
         :show-dialog="showAddDialog"
+        add
         @updateShowDialog="updateShowDialog($event)"
       />
-      {{ $store.state.os }}
+      <!--      {{ $store.state.os }}-->
     </v-container>
   </v-app>
 </template>
@@ -75,6 +86,9 @@ export default {
     showAddDialog: false,
     fab: false,
   }),
+  mounted() {
+    this.$store.commit("refreshSort");
+  },
   computed: {
     getSortMode() {
       return this.$store.state.sortMode;
@@ -90,7 +104,7 @@ export default {
 
 <style>
 html {
-  width: 500px;
-  height: 500px;
+  width: 550px;
+  height: 550px;
 }
 </style>
