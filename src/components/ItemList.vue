@@ -8,15 +8,6 @@
       </v-card-title>
 
       <v-card-actions>
-        <v-tooltip bottom>
-          <template v-slot:activator="{ on, attrs }">
-            <v-btn icon v-bind="attrs" v-on="on" @click="copyItem(item)">
-              <v-icon>mdi-content-copy</v-icon>
-            </v-btn>
-          </template>
-          <span>Copy Zoom Link</span>
-        </v-tooltip>
-
         <!--    <v-tooltip bottom>
           <template v-slot:activator="{ on, attrs }">
             <v-btn icon v-bind="attrs" v-on="on">
@@ -26,11 +17,21 @@
           <span>View Meeting Info</span>
         </v-tooltip>-->
 
-        <v-spacer />
+        <v-col cols="9">
+          <v-btn color="blue lighten-3" block @click="openZoom(item)"
+            >Join Zoom</v-btn
+          >
+        </v-col>
 
-        <v-btn color="blue lighten-3" @click="openZoom(item)">Join Zoom</v-btn>
-
         <v-spacer />
+        <v-tooltip bottom>
+          <template v-slot:activator="{ on, attrs }">
+            <v-btn icon v-bind="attrs" v-on="on" @click="copyItem(item)">
+              <v-icon>mdi-content-copy</v-icon>
+            </v-btn>
+          </template>
+          <span>Copy Zoom Link</span>
+        </v-tooltip>
 
         <v-tooltip bottom>
           <template v-slot:activator="{ on, attrs }">
@@ -59,14 +60,18 @@
       />
     </v-card>
     <v-snackbar
-      bottom
+      top
       shaped
       v-model="showSnackbar"
       :color="snackColor"
       :timeout="3000"
     >
       {{ message }}
+      <template v-slot:action="{ attrs }">
+        <v-btn text v-bind="attrs" @click="showSnackbar = false"> Close </v-btn>
+      </template>
     </v-snackbar>
+    <div class="my-9"></div>
   </v-container>
 </template>
 
@@ -80,7 +85,7 @@ export default {
     editIndex: -1,
     componentKey: 0,
     message: "",
-    showSnackbar: true,
+    showSnackbar: false,
     snackColor: "",
   }),
   methods: {
@@ -100,11 +105,16 @@ export default {
           (item.uname ? "&uname=" + item.uname : "")
         }`;
       }
-      console.log(url);
+      // console.log(url);
       browser.tabs.create({ url });
     },
-    deleteItem(index) {
-      this.$store.commit("deleteDataIndex", index);
+    async deleteItem(index) {
+      const res = await this.$confirm(
+        "Are you sure you would like to delete this?"
+      );
+      if (res) {
+        this.$store.commit("deleteDataIndex", index);
+      }
     },
     copyItem(item) {
       // eslint-disable-next-line no-unused-vars
@@ -113,20 +123,16 @@ export default {
         (item.pwd ? "?pwd=" + item.pwd : "") +
         (item.uname ? "&uname=" + item.uname : "")
       }`;
-      this.$copyText(url).then(
-        function (e) {
-          this.message = "Copy Successful";
-          this.snackColor = "success";
-          this.showSnackbar = true;
-          console.log(e);
-        },
-        function (e) {
-          this.message = "Copy Failed";
-          this.snackColor = "error";
-          this.showSnackbar = true;
-          console.log(e);
-        }
-      );
+      try {
+        this.$copyText(url);
+        this.message = "Copy Successful";
+        this.snackColor = "success";
+        this.showSnackbar = true;
+      } catch (e) {
+        this.message = "Copy Failed";
+        this.snackColor = "error";
+        this.showSnackbar = true;
+      }
     },
     editItem(index) {
       this.editIndex = index;

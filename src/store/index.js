@@ -62,7 +62,7 @@ export default new Vuex.Store({
           state.data.sort((a, b) => a.name.localeCompare(b.name));
         } else if (state.sortMode == sortModes[1]) {
           //Upcoming
-          state.data.sort((a, b) => getNearestDate(b) - getNearestDate(a));
+          state.data.sort((a, b) => getNearestDate(a) - getNearestDate(b));
         }
       }
     },
@@ -94,6 +94,7 @@ function getNearestDate(item) {
     for (const i of item.schedule.days) {
       let diff = days[i.toLowerCase()] - today.getDay();
       if (diff < 0) diff += 7;
+
       if (diff == 0) {
         const et = item.schedule.endTime;
         //Check Times
@@ -107,7 +108,6 @@ function getNearestDate(item) {
         nextDay = i;
       }
     }
-    console.log("least dif", leastDiff);
     date.setDate(date.getDate() + leastDiff);
     date.setHours(item.schedule.startTime.split(":")[0]);
     date.setMinutes(item.schedule.startTime.split(":")[1]);

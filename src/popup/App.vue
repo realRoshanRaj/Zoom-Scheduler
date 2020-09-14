@@ -4,10 +4,19 @@
       <v-app-bar dense>
         <v-toolbar-title>Zoom Scheduler</v-toolbar-title>
         <v-spacer></v-spacer>
-
-        <v-btn icon @click="$forceUpdate">
-          <v-icon>mdi-reload</v-icon>
-        </v-btn>
+        <v-tooltip left>
+          <template v-slot:activator="{ on, attrs }">
+            <v-btn
+              icon
+              @click="$store.commit('refreshSort')"
+              v-bind="attrs"
+              v-on="on"
+            >
+              <v-icon>mdi-reload</v-icon>
+            </v-btn>
+          </template>
+          <span>Refresh Sort</span>
+        </v-tooltip>
       </v-app-bar>
     </nav>
     <v-container fluid>
@@ -38,7 +47,7 @@
               color="blue lighten-3"
               v-bind="attrs"
               v-on="on"
-              @click="showAddDialog = !showAddDialog"
+              @click="addButton"
             >
               <v-icon>mdi-plus</v-icon>
             </v-btn>
@@ -69,6 +78,7 @@
       <AddEditPopup
         :show-dialog="showAddDialog"
         add
+        :key="addKey"
         @updateShowDialog="updateShowDialog($event)"
       />
       <!--      {{ $store.state.os }}-->
@@ -85,6 +95,7 @@ export default {
   data: () => ({
     showAddDialog: false,
     fab: false,
+    addKey: 0,
   }),
   mounted() {
     this.$store.commit("refreshSort");
@@ -97,6 +108,10 @@ export default {
   methods: {
     updateShowDialog(showDialog) {
       this.showAddDialog = showDialog;
+    },
+    addButton() {
+      this.addKey++;
+      this.showAddDialog = !this.showAddDialog;
     },
   },
 };
