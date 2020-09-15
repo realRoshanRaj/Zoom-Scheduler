@@ -22,7 +22,7 @@ export default new Vuex.Store({
   state: {
     data: [],
     os: platform.os.family,
-    sortMode: "A-Z",
+    sortMode: "Upcoming",
   },
   plugins: [
     createPersistedState({
@@ -98,7 +98,8 @@ function getNearestDate(item) {
       if (diff == 0) {
         const et = item.schedule.endTime;
         //Check Times
-        if (et < `${today.getHours()}:${today.getMinutes()}`) {
+        const current = today.toString().substr(16, 5);
+        if (et < current) {
           diff += 7;
         }
       }

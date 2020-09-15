@@ -71,7 +71,10 @@
         <v-btn text v-bind="attrs" @click="showSnackbar = false"> Close </v-btn>
       </template>
     </v-snackbar>
-    <div class="my-9"></div>
+    <!--    <div class="my-9"></div>-->
+    <v-row justify="center" v-if="getData.length > 0">
+      <v-img src="../assets/logo.png" max-width="150" aspect-ratio="1"></v-img>
+    </v-row>
   </v-container>
 </template>
 
@@ -100,9 +103,7 @@ export default {
         }`;
       } else {
         url = `https://zoom.us/j/${
-          item.id +
-          (item.pwd ? "?pwd=" + item.pwd : "") +
-          (item.uname ? "&uname=" + item.uname : "")
+          item.id + (item.pwd ? "?pwd=" + item.pwd : "")
         }`;
       }
       // console.log(url);
@@ -119,9 +120,7 @@ export default {
     copyItem(item) {
       // eslint-disable-next-line no-unused-vars
       const url = `https://zoom.us/j/${
-        item.id +
-        (item.pwd ? "?pwd=" + item.pwd : "") +
-        (item.uname ? "&uname=" + item.uname : "")
+        item.id + (item.pwd ? "?pwd=" + item.pwd : "")
       }`;
       try {
         this.$copyText(url);
