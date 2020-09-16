@@ -294,18 +294,23 @@ export default {
     },
   },
   mounted() {
+    console.log("entered here at least");
     if (Object.keys(this.initData).length) {
+      console.log("meeting data");
       this.name = this.initData.name;
       this.id = this.initData.id;
       this.password = this.initData.pwd;
       this.username = this.initData.uname;
 
-      this.scheduleSelection = this.initData.schedule.mode;
-      this.startTime = this.initData.schedule.startTime;
-      this.endTime = this.initData.schedule.endTime;
-      if (this.initData.schedule.days)
-        this.weekdays = this.initData.schedule.days;
-      if (this.initData.schedule.date) this.date = this.initData.schedule.date;
+      if (this.initData.schedule) {
+        this.scheduleSelection = this.initData.schedule.mode;
+        this.startTime = this.initData.schedule.startTime;
+        this.endTime = this.initData.schedule.endTime;
+        if (this.initData.schedule.days)
+          this.weekdays = this.initData.schedule.days;
+        if (this.initData.schedule.date)
+          this.date = this.initData.schedule.date;
+      }
     }
   },
   methods: {

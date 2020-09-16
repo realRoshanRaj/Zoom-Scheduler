@@ -1,22 +1,92 @@
 <template>
   <v-app>
     <nav>
-      <v-app-bar dense>
-        <v-toolbar-title>Zoom Scheduler</v-toolbar-title>
+      <v-app-bar dense color="blue">
+        <v-toolbar-title
+          ><span class="white--text">Zoom Scheduler</span></v-toolbar-title
+        >
         <v-spacer></v-spacer>
-        <v-tooltip left>
+        <!--        <v-tooltip left>-->
+        <!--          <template v-slot:activator="{ on, attrs }">-->
+        <!--            <v-btn-->
+        <!--              icon-->
+        <!--              @click="$store.commit('refreshSort')"-->
+        <!--              v-bind="attrs"-->
+        <!--              v-on="on"-->
+        <!--            >-->
+        <!--              <v-icon color="white">mdi-reload</v-icon>-->
+        <!--            </v-btn>-->
+        <!--          </template>-->
+        <!--          <span>Refresh Sort</span>-->
+        <!--        </v-tooltip>-->
+        <v-menu v-model="showMenu" transition="scroll-y-transition" offset-y>
           <template v-slot:activator="{ on, attrs }">
-            <v-btn
-              icon
-              @click="$store.commit('refreshSort')"
-              v-bind="attrs"
-              v-on="on"
-            >
-              <v-icon>mdi-reload</v-icon>
+            <v-btn icon v-bind="attrs" v-on="on">
+              <v-icon color="white">mdi-menu</v-icon>
             </v-btn>
           </template>
-          <span>Refresh Sort</span>
-        </v-tooltip>
+
+          <v-list>
+            <!--Notifs-->
+            <v-list-item>
+              <v-list-item-icon>
+                <v-icon>mdi-bell</v-icon>
+              </v-list-item-icon>
+              <v-list-item-title>Notifications</v-list-item-title>
+            </v-list-item>
+
+            <v-divider />
+            <!--Sort By-->
+            <v-menu
+              offset-x
+              left
+              open-on-hover
+              transition="scroll-x-reverse-transition"
+            >
+              <template v-slot:activator="{ on, attrs }">
+                <v-list-item v-bind="attrs" v-on="on">
+                  <v-list-item-icon>
+                    <v-icon>mdi-sort</v-icon>
+                  </v-list-item-icon>
+                  <v-list-item-title>Sort By</v-list-item-title>
+                  <v-icon right>mdi-chevron-right</v-icon>
+                </v-list-item>
+              </template>
+              <v-list>
+                <v-list-item-group v-model="getSortModeIndex" color="primary">
+                  <v-list-item
+                    v-for="(item, i) in sortMenu"
+                    :key="i"
+                    @click="updateSort(item.method)"
+                  >
+                    <v-list-item-icon>
+                      <v-icon>{{ item.icon }}</v-icon>
+                    </v-list-item-icon>
+                    <v-list-item-content>
+                      <v-list-item-title>{{ item.method }}</v-list-item-title>
+                    </v-list-item-content>
+                  </v-list-item>
+                </v-list-item-group>
+              </v-list>
+              <!--              <v-list>-->
+              <!--                &lt;!&ndash;A-Z&ndash;&gt;-->
+              <!--                <v-list-item @click="updateSort('A-Z')">-->
+              <!--                  <v-list-item-icon>-->
+              <!--                    <v-icon>mdi-sort-alphabetical-ascending</v-icon>-->
+              <!--                  </v-list-item-icon>-->
+              <!--                  <v-list-item-title>A-Z</v-list-item-title>-->
+              <!--                </v-list-item>-->
+              <!--                &lt;!&ndash;Upcoming&ndash;&gt;-->
+              <!--                <v-list-item @click="updateSort('Upcoming')">-->
+              <!--                  <v-list-item-icon>-->
+              <!--                    <v-icon>mdi-sort-clock-ascending</v-icon>-->
+              <!--                  </v-list-item-icon>-->
+              <!--                  <v-list-item-title>Upcoming</v-list-item-title>-->
+              <!--                </v-list-item>-->
+              <!--              </v-list>-->
+            </v-menu>
+          </v-list>
+        </v-menu>
       </v-app-bar>
     </nav>
     <v-container fluid>
@@ -24,64 +94,51 @@
         <ItemList />
       </v-row>
 
-      <v-speed-dial
-        v-model="fab"
-        bottom
-        right
-        fixed
-        direction="top"
-        open-on-hover
-      >
-        <template v-slot:activator>
-          <v-btn v-model="fab" color="blue lighten-2" dark fab>
-            <v-icon v-if="fab">mdi-close</v-icon>
-            <v-icon v-else>mdi-menu</v-icon>
+      <v-tooltip left>
+        <template v-slot:activator="{ on, attrs }">
+          <v-btn
+            fab
+            fixed
+            bottom
+            right
+            color="blue lighten-1"
+            v-bind="attrs"
+            v-on="on"
+            @click="addButton"
+          >
+            <v-icon color="white">mdi-plus</v-icon>
           </v-btn>
         </template>
+        <span>Add</span>
+      </v-tooltip>
 
-        <v-tooltip left>
-          <template v-slot:activator="{ on, attrs }">
-            <v-btn
-              fab
-              small
-              color="blue lighten-3"
-              v-bind="attrs"
-              v-on="on"
-              @click="addButton"
-            >
-              <v-icon>mdi-plus</v-icon>
-            </v-btn>
-          </template>
-          <span>Add</span>
-        </v-tooltip>
-
-        <v-tooltip left>
-          <template v-slot:activator="{ on, attrs }">
-            <v-btn
-              fab
-              small
-              color="blue lighten-3"
-              v-bind="attrs"
-              v-on="on"
-              @click="$store.dispatch('changeAndRefreshSort')"
-            >
-              <v-icon v-if="getSortMode == 'A-Z'"
-                >mdi-sort-alphabetical-ascending</v-icon
-              >
-              <v-icon v-else>mdi-sort-clock-ascending</v-icon>
-            </v-btn>
-          </template>
-          <span>Sort Mode: {{ getSortMode }}</span>
-        </v-tooltip>
-      </v-speed-dial>
+      <!--      <v-tooltip left>-->
+      <!--        <template v-slot:activator="{ on, attrs }">-->
+      <!--          <v-btn-->
+      <!--            fab-->
+      <!--            small-->
+      <!--            color="blue lighten-1"-->
+      <!--            v-bind="attrs"-->
+      <!--            v-on="on"-->
+      <!--            @click="$store.dispatch('changeAndRefreshSort')"-->
+      <!--          >-->
+      <!--            <v-icon v-if="getSortMode == 'A-Z'"-->
+      <!--              >mdi-sort-alphabetical-ascending</v-icon-->
+      <!--            >-->
+      <!--            <v-icon v-else>mdi-sort-clock-ascending</v-icon>-->
+      <!--          </v-btn>-->
+      <!--        </template>-->
+      <!--        <span>Sort Mode: {{ getSortMode }}</span>-->
+      <!--      </v-tooltip>-->
 
       <AddEditPopup
         :show-dialog="showAddDialog"
         add
+        :init-data="meetingData"
         :key="addKey"
         @updateShowDialog="updateShowDialog($event)"
       />
-      <!--      {{ $store.state.os }}-->
+      <!--      <v-btn @click="hello()">Hello</v-btn>-->
     </v-container>
   </v-app>
 </template>
@@ -96,18 +153,49 @@ export default {
     showAddDialog: false,
     fab: false,
     addKey: 0,
+    showMenu: false,
+    sortMenu: [
+      { icon: "mdi-sort-alphabetical-ascending", method: "A-Z" },
+      { icon: "mdi-sort-clock-ascending", method: "Upcoming" },
+    ],
+    meetingData: {},
   }),
-  mounted() {
+  async mounted() {
     this.$store.commit("refreshSort");
+    const tabs = await browser.tabs.query({ active: true });
+    const url = tabs[0].url;
+    const currURL = new URL(url);
+    if (currURL.hostname.includes("zoom.us")) {
+      const res = await this.$confirm(
+        "Would you like to add this tab as a Zoom Meeting?"
+      );
+      if (res) {
+        const meetingIDArr = currURL.pathname.split("/");
+        const id = meetingIDArr[meetingIDArr.length - 1];
+        const pwd = currURL.searchParams.get("pwd");
+        this.meetingData = { name: null, id, pwd, uname: null };
+        this.addKey++;
+        this.showAddDialog = true;
+      }
+    }
   },
+
   computed: {
-    getSortMode() {
-      return this.$store.state.sortMode;
+    getSortModeIndex() {
+      const x = this.$store.state.sortMode;
+      return this.sortMenu.findIndex((value) => value.method === x);
     },
   },
   methods: {
+    updateSort(value) {
+      this.$store.dispatch("changeAndRefreshSort", {
+        mode: value,
+      });
+      this.showMenu = false;
+    },
     updateShowDialog(showDialog) {
       this.showAddDialog = showDialog;
+      this.meetingData = {};
     },
     addButton() {
       this.addKey++;

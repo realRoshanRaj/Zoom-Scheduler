@@ -46,13 +46,8 @@ export default new Vuex.Store({
     deleteDataIndex(state, value) {
       state.data.splice(value, 1);
     },
-    changeSortMode(state) {
-      const index = sortModes.indexOf(state.sortMode);
-      if (index >= 0 && index < sortModes.length - 1) {
-        state.sortMode = sortModes[index + 1];
-      } else {
-        state.sortMode = sortModes[0];
-      }
+    changeSortMode(state, value) {
+      state.sortMode = value;
     },
     refreshSort(state) {
       //Refresh Sort
@@ -68,8 +63,8 @@ export default new Vuex.Store({
     },
   },
   actions: {
-    changeAndRefreshSort(store) {
-      store.commit("changeSortMode");
+    changeAndRefreshSort(store, { mode }) {
+      store.commit("changeSortMode", mode);
       store.commit("refreshSort");
     },
   },
