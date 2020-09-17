@@ -111,9 +111,12 @@ export default {
     ],
     meetingData: {},
   }),
-  async mounted() {
+  async created() {
     this.$store.commit("refreshSort");
-    const tabs = await browser.tabs.query({ active: true });
+    const tabs = await browser.tabs.query({
+      active: true,
+      lastFocusedWindow: true,
+    });
     const url = tabs[0].url;
     const currURL = new URL(url);
     if (currURL.hostname.includes("zoom.us")) {

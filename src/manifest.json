@@ -9,7 +9,7 @@
     "48": "icons/48.png",
     "128": "icons/128.png"
   },
-  "permissions": ["tabs"],
+  "permissions": ["activeTab"],
   "background": {
     "scripts": [
       "js/background.js"
