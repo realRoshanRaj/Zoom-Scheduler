@@ -6,19 +6,6 @@
           ><span class="white--text">Zoom Scheduler</span></v-toolbar-title
         >
         <v-spacer></v-spacer>
-        <!--        <v-tooltip left>-->
-        <!--          <template v-slot:activator="{ on, attrs }">-->
-        <!--            <v-btn-->
-        <!--              icon-->
-        <!--              @click="$store.commit('refreshSort')"-->
-        <!--              v-bind="attrs"-->
-        <!--              v-on="on"-->
-        <!--            >-->
-        <!--              <v-icon color="white">mdi-reload</v-icon>-->
-        <!--            </v-btn>-->
-        <!--          </template>-->
-        <!--          <span>Refresh Sort</span>-->
-        <!--        </v-tooltip>-->
         <v-menu v-model="showMenu" transition="scroll-y-transition" offset-y>
           <template v-slot:activator="{ on, attrs }">
             <v-btn icon v-bind="attrs" v-on="on">
@@ -27,13 +14,13 @@
           </template>
 
           <v-list>
-            <!--Notifs-->
+            <!-- Notifs
             <v-list-item>
               <v-list-item-icon>
                 <v-icon>mdi-bell</v-icon>
               </v-list-item-icon>
               <v-list-item-title>Notifications</v-list-item-title>
-            </v-list-item>
+            </v-list-item>-->
 
             <v-divider />
             <!--Sort By-->
@@ -68,22 +55,6 @@
                   </v-list-item>
                 </v-list-item-group>
               </v-list>
-              <!--              <v-list>-->
-              <!--                &lt;!&ndash;A-Z&ndash;&gt;-->
-              <!--                <v-list-item @click="updateSort('A-Z')">-->
-              <!--                  <v-list-item-icon>-->
-              <!--                    <v-icon>mdi-sort-alphabetical-ascending</v-icon>-->
-              <!--                  </v-list-item-icon>-->
-              <!--                  <v-list-item-title>A-Z</v-list-item-title>-->
-              <!--                </v-list-item>-->
-              <!--                &lt;!&ndash;Upcoming&ndash;&gt;-->
-              <!--                <v-list-item @click="updateSort('Upcoming')">-->
-              <!--                  <v-list-item-icon>-->
-              <!--                    <v-icon>mdi-sort-clock-ascending</v-icon>-->
-              <!--                  </v-list-item-icon>-->
-              <!--                  <v-list-item-title>Upcoming</v-list-item-title>-->
-              <!--                </v-list-item>-->
-              <!--              </v-list>-->
             </v-menu>
           </v-list>
         </v-menu>
@@ -112,25 +83,6 @@
         <span>Add</span>
       </v-tooltip>
 
-      <!--      <v-tooltip left>-->
-      <!--        <template v-slot:activator="{ on, attrs }">-->
-      <!--          <v-btn-->
-      <!--            fab-->
-      <!--            small-->
-      <!--            color="blue lighten-1"-->
-      <!--            v-bind="attrs"-->
-      <!--            v-on="on"-->
-      <!--            @click="$store.dispatch('changeAndRefreshSort')"-->
-      <!--          >-->
-      <!--            <v-icon v-if="getSortMode == 'A-Z'"-->
-      <!--              >mdi-sort-alphabetical-ascending</v-icon-->
-      <!--            >-->
-      <!--            <v-icon v-else>mdi-sort-clock-ascending</v-icon>-->
-      <!--          </v-btn>-->
-      <!--        </template>-->
-      <!--        <span>Sort Mode: {{ getSortMode }}</span>-->
-      <!--      </v-tooltip>-->
-
       <AddEditPopup
         :show-dialog="showAddDialog"
         add
@@ -138,7 +90,6 @@
         :key="addKey"
         @updateShowDialog="updateShowDialog($event)"
       />
-      <!--      <v-btn @click="hello()">Hello</v-btn>-->
     </v-container>
   </v-app>
 </template>

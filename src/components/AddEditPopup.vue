@@ -24,6 +24,7 @@
               v-model="name"
               label="Meeting Name"
               dense
+              autofocus
               outlined
               required
               :rules="[(v) => !!v || 'Name is required']"
@@ -294,9 +295,7 @@ export default {
     },
   },
   mounted() {
-    console.log("entered here at least");
     if (Object.keys(this.initData).length) {
-      console.log("meeting data");
       this.name = this.initData.name;
       this.id = this.initData.id;
       this.password = this.initData.pwd;
