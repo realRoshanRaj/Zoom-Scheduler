@@ -6,7 +6,7 @@
           ><span class="white--text">Zoom Scheduler</span></v-toolbar-title
         >
         <v-spacer></v-spacer>
-        <v-menu v-model="showMenu" transition="scroll-y-transition" offset-y>
+        <v-menu v-model="showMenu" offset-y>
           <template v-slot:activator="{ on, attrs }">
             <v-btn icon v-bind="attrs" v-on="on">
               <v-icon color="white">mdi-menu</v-icon>
@@ -113,23 +113,26 @@ export default {
   }),
   async created() {
     this.$store.commit("refreshSort");
+
     const tabs = await browser.tabs.query({
       active: true,
       lastFocusedWindow: true,
     });
-    const url = tabs[0].url;
-    const currURL = new URL(url);
-    if (currURL.hostname.includes("zoom.us")) {
-      const res = await this.$confirm(
-        "Would you like to add this tab as a Zoom Meeting?"
-      );
-      if (res) {
-        const meetingIDArr = currURL.pathname.split("/");
-        const id = meetingIDArr[meetingIDArr.length - 1];
-        const pwd = currURL.searchParams.get("pwd");
-        this.meetingData = { name: null, id, pwd, uname: null };
-        this.addKey++;
-        this.showAddDialog = true;
+    if (tabs.length > 0) {
+      const url = tabs[0].url;
+      const currURL = new URL(url);
+      if (currURL.hostname.includes("zoom.us")) {
+        const res = await this.$confirm(
+          "Would you like to add this tab as a Zoom Meeting?"
+        );
+        if (res) {
+          const meetingIDArr = currURL.pathname.split("/");
+          const id = meetingIDArr[meetingIDArr.length - 1];
+          const pwd = currURL.searchParams.get("pwd");
+          this.meetingData = { name: null, id, pwd, uname: null };
+          this.addKey++;
+          this.showAddDialog = true;
+        }
       }
     }
   },

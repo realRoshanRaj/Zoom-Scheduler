@@ -228,6 +228,8 @@
 </template>
 
 <script>
+import { v4 as uuidv4 } from "uuid";
+
 export default {
   name: "AddEditPopup",
   props: {
@@ -298,8 +300,8 @@ export default {
     if (Object.keys(this.initData).length) {
       this.name = this.initData.name;
       this.id = this.initData.id;
-      this.password = this.initData.pwd;
-      this.username = this.initData.uname;
+      if (this.initData.pwd) this.password = this.initData.pwd;
+      if (this.initData.uname) this.username = this.initData.uname;
 
       if (this.initData.schedule) {
         this.scheduleSelection = this.initData.schedule.mode;
@@ -335,6 +337,7 @@ export default {
       const itemData = {
         name: this.name,
         id: this.id,
+        uuid: uuidv4(),
       };
       if (this.password) itemData.pwd = this.password;
       if (this.username) itemData.uname = this.username;

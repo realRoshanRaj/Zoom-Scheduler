@@ -4,6 +4,7 @@ import createPersistedState from "vuex-persistedstate";
 import SecureLS from "secure-ls";
 const ls = new SecureLS();
 const platform = require("platform");
+import { v4 as uuidv4 } from "uuid";
 
 Vue.use(Vuex);
 
@@ -23,6 +24,7 @@ export default new Vuex.Store({
     data: [],
     os: platform.os.family,
     sortMode: "Upcoming",
+    lastOpened: new Date(),
   },
   plugins: [
     createPersistedState({
@@ -61,11 +63,25 @@ export default new Vuex.Store({
         }
       }
     },
+    updateLastOpened(state, value) {
+      state.lastOpened = value;
+    },
+  },
+  getters: {
+    getNextDate: (state) => (index) => {
+      return getNearestDate(state.data[index]);
+    },
   },
   actions: {
     changeAndRefreshSort(store, { mode }) {
       store.commit("changeSortMode", mode);
       store.commit("refreshSort");
+    },
+    onStartup(store) {
+      store.commit("updateLastOpened", new Date(store.state.lastOpened));
+      store.state.data.forEach((item) => {
+        if (!item.uuid) item.uuid = uuidv4();
+      });
     },
   },
   modules: {},
