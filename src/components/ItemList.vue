@@ -114,6 +114,7 @@ export default {
         "Are you sure you would like to delete this?"
       );
       if (res) {
+        await browser.alarms.clear(this.$store.state.data[index].uuid);
         this.$store.commit("deleteDataIndex", index);
       }
     },

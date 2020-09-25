@@ -256,6 +256,7 @@ export default {
     endTime: null,
     weekdays: [],
     date: null,
+    uuid: null,
   }),
   computed: {
     saveDisabled() {
@@ -300,6 +301,7 @@ export default {
     if (Object.keys(this.initData).length) {
       this.name = this.initData.name;
       this.id = this.initData.id;
+      this.uuid = this.initData.uuid;
       if (this.initData.pwd) this.password = this.initData.pwd;
       if (this.initData.uname) this.username = this.initData.uname;
 
@@ -323,12 +325,29 @@ export default {
       this.id = null;
       this.password = null;
     },
-    save() {
+    async save() {
+      let when;
       if (this.add) {
         this.addItem();
+        when =
+          this.$store.getters.getNextDate(this.$store.state.data.length - 1) -
+          this.$store.state.notificationTime * 60000;
       } else {
         this.editItem(this.initData.index);
+
+        //Alarms
+        await browser.alarms.clear(this.initData.uuid);
+        when =
+          this.$store.getters.getNextDate(this.initData.index) -
+          this.$store.state.notificationTime * 60000;
       }
+
+      if (when > Date.now()) {
+        browser.alarms.create(this.uuid, {
+          when,
+        });
+      }
+
       this.$store.commit("refreshSort");
       this.clearFields();
       this.exit();
@@ -338,7 +357,9 @@ export default {
         name: this.name,
         id: this.id,
         uuid: uuidv4(),
+        notification: true,
       };
+      this.uuid = itemData.uuid;
       if (this.password) itemData.pwd = this.password;
       if (this.username) itemData.uname = this.username;
       const schedule = {
@@ -356,9 +377,11 @@ export default {
       this.$store.commit("addItem", itemData);
     },
     editItem(index) {
+      console.log("editing");
       const itemData = {
         name: this.name,
         id: this.id,
+        uuid: this.initData.uuid,
       };
       if (this.password) itemData.pwd = this.password;
       if (this.username) itemData.uname = this.username;
@@ -373,7 +396,7 @@ export default {
         schedule.days = this.weekdays;
       }
       itemData.schedule = schedule;
-
+      console.log(itemData);
       this.$store.commit("updateItem", { item: itemData, index });
     },
     toggle() {

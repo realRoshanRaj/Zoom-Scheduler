@@ -6,33 +6,56 @@ browser.runtime.onMessage.addListener(async function (
   sender,
   sendResponse
 ) {
-  store.dispatch("onStartup");
-  console.log("hello again", store.state.lastOpened);
+  await store.dispatch("onStartup");
+  // console.log("hello again", store.state.notificationTime);
   // browser.tabs.executeScript({
   //   file: "content-script.js",
   // });
-  const alarms = await browser.notifications.getAll();
-  console.log(alarms);
-  browser.alarms.create(
-    "The Name of the Meeting",
-    {
-      when: Date.now() + 1000,
-    } // optional object
-  );
+  const alarms = await browser.alarms.getAll();
+  console.log("arl", alarms);
+  // alarms.forEach((value) => console.log(new Date(value.scheduledTime)));
+
+  store.state.data.forEach((value, index) => {
+    const exists = alarms.filter((alarm) => alarm.name === value.uuid);
+    if (exists.length === 0) {
+      console.log(value.schedule.startTime);
+      const when =
+        store.getters.getNextDate(index) - store.state.notificationTime * 60000;
+      console.log(index, new Date(when));
+      if (when > Date.now()) {
+        browser.alarms.create(value.uuid, {
+          when,
+        });
+      }
+    }
+  });
 });
 
 browser.notifications.onClicked.addListener((info) => {
-  console.log("they has been pressed", info);
-  browser.tabs.create({ url: "https://google.com" });
+  const item = store.getters.getElementFromUUID(info)[0];
+
+  const os = store.state.os;
+  let url;
+  if (os.toLowerCase() == "windows" || os.toLowerCase() == "macos") {
+    url = `zoommtg://zoom.us/join?confno=${
+      item.id +
+      (item.pwd ? "&pwd=" + item.pwd : "") +
+      (item.uname ? "&uname=" + item.uname : "")
+    }`;
+  } else {
+    url = `https://zoom.us/j/${item.id + (item.pwd ? "?pwd=" + item.pwd : "")}`;
+  }
+
+  browser.tabs.create({ url });
 });
 
 browser.alarms.onAlarm.addListener((info) => {
-  console.log("the alarm");
-  browser.notifications.create(store.state.data[0].uuid, {
+  // console.log("the alarm", store.getters.getElementFromUUID(info.name));
+  browser.notifications.create(info.name, {
     type: "basic",
     iconUrl: browser.extension.getURL("icons/48.png"),
     title: "Zoom Scheduler",
-    message: info.name,
+    message: store.getters.getElementFromUUID(info.name)[0].name,
   });
   console.log(info);
 });

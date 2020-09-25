@@ -5,6 +5,7 @@ import SecureLS from "secure-ls";
 const ls = new SecureLS();
 const platform = require("platform");
 import { v4 as uuidv4 } from "uuid";
+import VuexWebExtensions from "vuex-webextensions";
 
 Vue.use(Vuex);
 
@@ -24,7 +25,7 @@ export default new Vuex.Store({
     data: [],
     os: platform.os.family,
     sortMode: "Upcoming",
-    lastOpened: new Date(),
+    notificationTime: 2,
   },
   plugins: [
     createPersistedState({
@@ -34,6 +35,7 @@ export default new Vuex.Store({
         removeItem: (key) => ls.remove(key),
       },
     }),
+    VuexWebExtensions(),
   ],
   mutations: {
     setData: (state, value) => {
@@ -59,7 +61,9 @@ export default new Vuex.Store({
           state.data.sort((a, b) => a.name.localeCompare(b.name));
         } else if (state.sortMode == sortModes[1]) {
           //Upcoming
-          state.data.sort((a, b) => getNearestDate(a) - getNearestDate(b));
+          state.data.sort(
+            (a, b) => getNearestDate(a, true) - getNearestDate(b, true)
+          );
         }
       }
     },
@@ -69,7 +73,10 @@ export default new Vuex.Store({
   },
   getters: {
     getNextDate: (state) => (index) => {
-      return getNearestDate(state.data[index]);
+      return getNearestDate(state.data[index], false);
+    },
+    getElementFromUUID: (state) => (uuid) => {
+      return state.data.filter((value) => value.uuid == uuid);
     },
   },
   actions: {
@@ -78,7 +85,7 @@ export default new Vuex.Store({
       store.commit("refreshSort");
     },
     onStartup(store) {
-      store.commit("updateLastOpened", new Date(store.state.lastOpened));
+      // store.commit("updateLastOpened", new Date(store.state.lastOpened));
       store.state.data.forEach((item) => {
         if (!item.uuid) item.uuid = uuidv4();
       });
@@ -87,7 +94,7 @@ export default new Vuex.Store({
   modules: {},
 });
 /* eslint-disable no-unused-vars */
-function getNearestDate(item) {
+function getNearestDate(item, end) {
   let date = new Date();
   if (item.schedule.mode == "once") {
     const year = item.schedule.date.split("-")[0],
@@ -107,7 +114,7 @@ function getNearestDate(item) {
       if (diff < 0) diff += 7;
 
       if (diff == 0) {
-        const et = item.schedule.endTime;
+        const et = end ? item.schedule.endTime : item.schedule.startTime;
         //Check Times
         const current = today.toString().substr(16, 5);
         if (et < current) {
