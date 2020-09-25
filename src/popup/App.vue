@@ -14,13 +14,13 @@
           </template>
 
           <v-list>
-            <!-- Notifs
-            <v-list-item>
+            <!--Notifs-->
+            <v-list-item @click="showNotifDialog = true">
               <v-list-item-icon>
                 <v-icon>mdi-bell</v-icon>
               </v-list-item-icon>
               <v-list-item-title>Notifications</v-list-item-title>
-            </v-list-item>-->
+            </v-list-item>
 
             <v-divider />
             <!--Sort By-->
@@ -90,6 +90,11 @@
         :key="addKey"
         @updateShowDialog="updateShowDialog($event)"
       />
+
+      <Notifications
+        :dialog="showNotifDialog"
+        @closeNotifDialog="closeNotifDialog($event)"
+      />
     </v-container>
   </v-app>
 </template>
@@ -97,9 +102,10 @@
 <script>
 import ItemList from "../components/ItemList";
 import AddEditPopup from "../components/AddEditPopup";
+import Notifications from "@/components/Notifications";
 export default {
   name: "App",
-  components: { AddEditPopup, ItemList },
+  components: { Notifications, AddEditPopup, ItemList },
   data: () => ({
     showAddDialog: false,
     fab: false,
@@ -110,6 +116,7 @@ export default {
       { icon: "mdi-sort-clock-ascending", method: "Upcoming" },
     ],
     meetingData: {},
+    showNotifDialog: false,
   }),
   async created() {
     this.$store.commit("refreshSort");
@@ -153,6 +160,9 @@ export default {
     updateShowDialog(showDialog) {
       this.showAddDialog = showDialog;
       this.meetingData = {};
+    },
+    closeNotifDialog(dialog) {
+      this.showNotifDialog = dialog;
     },
     addButton() {
       this.addKey++;

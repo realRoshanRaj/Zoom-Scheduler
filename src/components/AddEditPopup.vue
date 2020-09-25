@@ -1,7 +1,7 @@
 <template>
-  <v-dialog v-model="showDialog" persistent>
+  <v-dialog v-model="showDialog" persistent full-width scrollable="false">
     <v-card rounded>
-      <v-row justify="space-between">
+      <v-row justify="space-between" no-gutters>
         <v-col>
           <v-card-title class="text-h5" v-if="add">
             {{ step == 1 ? "Add Meeting" : "Add Meeting (Schedule)" }}
@@ -10,7 +10,7 @@
             {{ step == 1 ? "Edit Meeting" : "Edit Meeting (Schedule)" }}
           </v-card-title>
         </v-col>
-        <v-col cols="2">
+        <v-col cols="1" class="mt-3">
           <v-btn icon @click="exit">
             <v-icon color="red">mdi-close</v-icon>
           </v-btn>
