@@ -1,5 +1,5 @@
 <template>
-  <v-dialog v-model="showDialog" persistent full-width scrollable="false">
+  <v-dialog v-model="showDialog" persistent>
     <v-card rounded>
       <v-row justify="space-between" no-gutters>
         <v-col>
@@ -257,6 +257,7 @@ export default {
     weekdays: [],
     date: null,
     uuid: null,
+    notification: true,
   }),
   computed: {
     saveDisabled() {
@@ -302,6 +303,7 @@ export default {
       this.name = this.initData.name;
       this.id = this.initData.id;
       this.uuid = this.initData.uuid;
+      this.notification = this.initData.notification;
       if (this.initData.pwd) this.password = this.initData.pwd;
       if (this.initData.uname) this.username = this.initData.uname;
 
@@ -342,7 +344,7 @@ export default {
           this.$store.state.notificationTime * 60000;
       }
 
-      if (when > Date.now()) {
+      if (when > Date.now() && this.notification) {
         browser.alarms.create(this.uuid, {
           when,
         });
@@ -377,11 +379,11 @@ export default {
       this.$store.commit("addItem", itemData);
     },
     editItem(index) {
-      console.log("editing");
       const itemData = {
         name: this.name,
         id: this.id,
         uuid: this.initData.uuid,
+        notification: this.initData.notification,
       };
       if (this.password) itemData.pwd = this.password;
       if (this.username) itemData.uname = this.username;
@@ -396,7 +398,6 @@ export default {
         schedule.days = this.weekdays;
       }
       itemData.schedule = schedule;
-      console.log(itemData);
       this.$store.commit("updateItem", { item: itemData, index });
     },
     toggle() {

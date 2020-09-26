@@ -25,7 +25,7 @@ export default new Vuex.Store({
     data: [],
     os: platform.os.family,
     sortMode: "Upcoming",
-    notificationTime: 2,
+    notificationTime: 5,
   },
   plugins: [
     createPersistedState({
@@ -67,8 +67,11 @@ export default new Vuex.Store({
         }
       }
     },
-    updateLastOpened(state, value) {
-      state.lastOpened = value;
+    updateNotificationTime(state, value) {
+      state.notificationTime = value;
+    },
+    toggleNotification(state, index) {
+      state.data[index].notification = !state.data[index].notification;
     },
   },
   getters: {
@@ -88,6 +91,7 @@ export default new Vuex.Store({
       // store.commit("updateLastOpened", new Date(store.state.lastOpened));
       store.state.data.forEach((item) => {
         if (!item.uuid) item.uuid = uuidv4();
+        if (!item.notification) item.notification = true;
       });
     },
   },

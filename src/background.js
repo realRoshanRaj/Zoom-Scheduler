@@ -6,29 +6,30 @@ browser.runtime.onMessage.addListener(async function (
   sender,
   sendResponse
 ) {
-  await store.dispatch("onStartup");
   // console.log("hello again", store.state.notificationTime);
   // browser.tabs.executeScript({
   //   file: "content-script.js",
   // });
   const alarms = await browser.alarms.getAll();
-  console.log("arl", alarms);
+  // console.log("arl", alarms);
   // alarms.forEach((value) => console.log(new Date(value.scheduledTime)));
-
-  store.state.data.forEach((value, index) => {
-    const exists = alarms.filter((alarm) => alarm.name === value.uuid);
-    if (exists.length === 0) {
-      console.log(value.schedule.startTime);
-      const when =
-        store.getters.getNextDate(index) - store.state.notificationTime * 60000;
-      console.log(index, new Date(when));
-      if (when > Date.now()) {
-        browser.alarms.create(value.uuid, {
-          when,
-        });
+  if (store.state.notificationTime > 0) {
+    store.state.data.forEach((value, index) => {
+      const exists = alarms.filter((alarm) => alarm.name === value.uuid);
+      if (value.notification && exists.length === 0) {
+        // console.log(value.schedule.startTime);
+        const when =
+          store.getters.getNextDate(index) -
+          store.state.notificationTime * 60000;
+        // console.log(index, new Date(when));
+        if (when > Date.now()) {
+          browser.alarms.create(value.uuid, {
+            when,
+          });
+        }
       }
-    }
-  });
+    });
+  }
 });
 
 browser.notifications.onClicked.addListener((info) => {

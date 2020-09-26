@@ -8,48 +8,57 @@
       </v-card-title>
 
       <v-card-actions>
-        <!--    <v-tooltip bottom>
-          <template v-slot:activator="{ on, attrs }">
-            <v-btn icon v-bind="attrs" v-on="on">
-              <v-icon>mdi-information</v-icon>
-            </v-btn>
-          </template>
-          <span>View Meeting Info</span>
-        </v-tooltip>-->
+        <v-row no-gutters>
+          <v-tooltip bottom>
+            <template v-slot:activator="{ on, attrs }">
+              <v-btn
+                icon
+                v-bind="attrs"
+                v-on="on"
+                :disabled="$store.state.notificationTime <= 0"
+                @click="toggleNotification(index)"
+              >
+                <v-icon>{{
+                  item.notification ? "mdi-bell" : "mdi-bell-off"
+                }}</v-icon>
+              </v-btn>
+            </template>
+            <span>Notification: {{ item.notification ? "On" : "Off" }}</span>
+          </v-tooltip>
 
-        <v-col cols="9">
-          <v-btn color="blue lighten-3" block @click="openZoom(item)"
-            >Join Zoom</v-btn
-          >
-        </v-col>
+          <v-tooltip bottom>
+            <template v-slot:activator="{ on, attrs }">
+              <v-btn icon v-bind="attrs" v-on="on" @click="copyItem(item)">
+                <v-icon>mdi-content-copy</v-icon>
+              </v-btn>
+            </template>
+            <span>Copy Zoom Link</span>
+          </v-tooltip>
 
-        <v-spacer />
-        <v-tooltip bottom>
-          <template v-slot:activator="{ on, attrs }">
-            <v-btn icon v-bind="attrs" v-on="on" @click="copyItem(item)">
-              <v-icon>mdi-content-copy</v-icon>
+          <v-col class="mx-3">
+            <v-btn color="blue lighten-2" block @click="openZoom(item)">
+              Join Zoom
             </v-btn>
-          </template>
-          <span>Copy Zoom Link</span>
-        </v-tooltip>
+          </v-col>
 
-        <v-tooltip bottom>
-          <template v-slot:activator="{ on, attrs }">
-            <v-btn icon v-bind="attrs" v-on="on" @click="editItem(index)">
-              <v-icon>mdi-pencil</v-icon>
-            </v-btn>
-          </template>
-          <span>Edit</span>
-        </v-tooltip>
+          <v-tooltip bottom>
+            <template v-slot:activator="{ on, attrs }">
+              <v-btn icon v-bind="attrs" v-on="on" @click="editItem(index)">
+                <v-icon>mdi-pencil</v-icon>
+              </v-btn>
+            </template>
+            <span>Edit</span>
+          </v-tooltip>
 
-        <v-tooltip bottom>
-          <template v-slot:activator="{ on, attrs }">
-            <v-btn icon v-bind="attrs" v-on="on" @click="deleteItem(index)">
-              <v-icon>mdi-delete</v-icon>
-            </v-btn>
-          </template>
-          <span>Delete</span>
-        </v-tooltip>
+          <v-tooltip bottom>
+            <template v-slot:activator="{ on, attrs }">
+              <v-btn icon v-bind="attrs" v-on="on" @click="deleteItem(index)">
+                <v-icon>mdi-delete</v-icon>
+              </v-btn>
+            </template>
+            <span>Delete</span>
+          </v-tooltip>
+        </v-row>
       </v-card-actions>
       <AddEditPopup
         v-if="editIndex != -1"
@@ -142,6 +151,9 @@ export default {
     closeEditDialog(showDialog) {
       this.showDialog = showDialog;
       this.index = -1;
+    },
+    toggleNotification(index) {
+      this.$store.commit("toggleNotification", index);
     },
   },
   computed: {
