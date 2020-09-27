@@ -174,7 +174,8 @@ export default {
 </script>
 
 <style>
-html {
+html,
+body {
   width: 550px;
   height: 550px;
 }

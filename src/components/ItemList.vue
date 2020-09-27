@@ -152,8 +152,21 @@ export default {
       this.showDialog = showDialog;
       this.index = -1;
     },
-    toggleNotification(index) {
+    async toggleNotification(index) {
       this.$store.commit("toggleNotification", index);
+      const item = this.$store.state.data[index];
+      if (item.notification) {
+        const when =
+          this.$store.getters.getNextDate(index) -
+          this.$store.state.notificationTime * 60000;
+        if (when > Date.now()) {
+          browser.alarms.create(item.uuid, {
+            when,
+          });
+        }
+      } else {
+        await browser.alarms.clear(this.$store.state.data[index].uuid);
+      }
     },
   },
   computed: {

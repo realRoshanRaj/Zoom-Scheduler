@@ -65,11 +65,12 @@ export default {
     exit() {
       this.$emit("closeNotifDialog", false);
     },
-    save() {
+    async save() {
       this.$store.commit(
         "updateNotificationTime",
         this.state ? this.minutes : -1
       );
+      await browser.alarms.clearAll();
       browser.runtime.sendMessage("notif");
       this.exit();
     },
