@@ -1,11 +1,8 @@
 import Vue from "vue";
 import Vuex from "vuex";
 import createPersistedState from "vuex-persistedstate";
-import SecureLS from "secure-ls";
-const ls = new SecureLS();
 const platform = require("platform");
 import { v4 as uuidv4 } from "uuid";
-import VuexWebExtensions from "vuex-webextensions";
 
 Vue.use(Vuex);
 
@@ -27,16 +24,7 @@ export default new Vuex.Store({
     sortMode: "Upcoming",
     notificationTime: 5,
   },
-  plugins: [
-    createPersistedState({
-      storage: {
-        getItem: (key) => ls.get(key),
-        setItem: (key, value) => ls.set(key, value),
-        removeItem: (key) => ls.remove(key),
-      },
-    }),
-    VuexWebExtensions(),
-  ],
+  plugins: [createPersistedState()],
   mutations: {
     setData: (state, value) => {
       state.data = value;
@@ -66,6 +54,7 @@ export default new Vuex.Store({
           );
         }
       }
+      console.log(state.data);
     },
     updateNotificationTime(state, value) {
       state.notificationTime = value;
@@ -88,7 +77,7 @@ export default new Vuex.Store({
       store.commit("refreshSort");
     },
     onStartup(store) {
-      // store.commit("updateLastOpened", new Date(store.state.lastOpened));
+      store.commit("refreshSort");
       store.state.data.forEach((item) => {
         if (!item.uuid) item.uuid = uuidv4();
         if (!item.notification) item.notification = true;

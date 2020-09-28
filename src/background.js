@@ -6,7 +6,6 @@ browser.runtime.onMessage.addListener(async function (
   sender,
   sendResponse
 ) {
-  // console.log("hello again", store.state.notificationTime);
   // browser.tabs.executeScript({
   //   file: "content-script.js",
   // });
@@ -56,7 +55,9 @@ browser.alarms.onAlarm.addListener((info) => {
     type: "basic",
     iconUrl: browser.extension.getURL("icons/48.png"),
     title: "Zoom Scheduler",
-    message: store.getters.getElementFromUUID(info.name)[0].name,
+    message:
+      store.getters.getElementFromUUID(info.name)[0].name +
+      ": Click to Join Meeting",
   });
-  console.log(info);
+  // console.log(info);
 });

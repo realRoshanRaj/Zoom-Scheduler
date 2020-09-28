@@ -120,8 +120,6 @@ export default {
   }),
   async created() {
     await this.$store.dispatch("onStartup");
-    this.$store.commit("refreshSort");
-    console.log(this.$store.state.data);
     const tabs = await browser.tabs.query({
       active: true,
       lastFocusedWindow: true,
