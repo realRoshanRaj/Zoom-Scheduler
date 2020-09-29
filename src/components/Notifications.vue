@@ -25,7 +25,6 @@
             autofocus
             min="1"
             max="60"
-            con
             :rules="[rules.required, rules.max, rules.min]"
             suffix="minutes"
             outlined

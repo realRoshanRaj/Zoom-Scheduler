@@ -13,8 +13,8 @@ export default {
   computed: {
     defaultText() {
       return browser.i18n.getMessage("extName");
-    }
-  }
+    },
+  },
 };
 </script>
 

@@ -11,14 +11,11 @@ browser.runtime.onMessage.addListener(async function (
   //   file: "content-script.js",
   // });
   const alarms = await browser.alarms.getAll();
-  console.log("arl", alarms);
   state = JSON.parse(ls.get("vuex"));
-  // alarms.forEach((value) => console.log(new Date(value.scheduledTime)));
   if (state.notificationTime > 0) {
     state.data.forEach((value, index) => {
       const exists = alarms.filter((alarm) => alarm.name === value.uuid);
       if (value.notification && exists.length === 0) {
-        console.log(value.schedule.startTime);
         const when =
           getNearestDate(state.data[index]) - state.notificationTime * 60000;
         if (when > Date.now()) {
@@ -50,7 +47,6 @@ browser.notifications.onClicked.addListener((info) => {
 });
 
 browser.alarms.onAlarm.addListener((info) => {
-  console.log("info", info);
   browser.notifications.create(info.name, {
     type: "basic",
     iconUrl: browser.extension.getURL("icons/48.png"),

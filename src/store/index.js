@@ -64,7 +64,6 @@ export default new Vuex.Store({
           );
         }
       }
-      console.log(state.data);
     },
     updateNotificationTime(state, value) {
       state.notificationTime = value;
