@@ -16,7 +16,7 @@
       </v-row>
       <v-divider />
       <v-card-text class="mt-6">
-        <v-form v-model="valid">
+        <v-form v-model="valid" @submit="save">
           <v-text-field
             v-model="minutes"
             :disabled="!state"
@@ -25,6 +25,7 @@
             autofocus
             min="1"
             max="60"
+            con
             :rules="[rules.required, rules.max, rules.min]"
             suffix="minutes"
             outlined

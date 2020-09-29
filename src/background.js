@@ -1,6 +1,7 @@
 /* eslint-disable no-unused-vars */
-import store from "./store";
-
+import SecureLS from "secure-ls";
+const ls = new SecureLS();
+let state = JSON.parse(ls.get("vuex"));
 browser.runtime.onMessage.addListener(async function (
   request,
   sender,
@@ -10,17 +11,16 @@ browser.runtime.onMessage.addListener(async function (
   //   file: "content-script.js",
   // });
   const alarms = await browser.alarms.getAll();
-  // console.log("arl", alarms);
+  console.log("arl", alarms);
+  state = JSON.parse(ls.get("vuex"));
   // alarms.forEach((value) => console.log(new Date(value.scheduledTime)));
-  if (store.state.notificationTime > 0) {
-    store.state.data.forEach((value, index) => {
+  if (state.notificationTime > 0) {
+    state.data.forEach((value, index) => {
       const exists = alarms.filter((alarm) => alarm.name === value.uuid);
       if (value.notification && exists.length === 0) {
-        // console.log(value.schedule.startTime);
+        console.log(value.schedule.startTime);
         const when =
-          store.getters.getNextDate(index) -
-          store.state.notificationTime * 60000;
-        // console.log(index, new Date(when));
+          getNearestDate(state.data[index]) - state.notificationTime * 60000;
         if (when > Date.now()) {
           browser.alarms.create(value.uuid, {
             when,
@@ -32,9 +32,9 @@ browser.runtime.onMessage.addListener(async function (
 });
 
 browser.notifications.onClicked.addListener((info) => {
-  const item = store.getters.getElementFromUUID(info)[0];
+  const item = getElementFromUUID(info)[0];
 
-  const os = store.state.os;
+  const os = state.os;
   let url;
   if (os.toLowerCase() == "windows" || os.toLowerCase() == "macos") {
     url = `zoommtg://zoom.us/join?confno=${
@@ -50,14 +50,70 @@ browser.notifications.onClicked.addListener((info) => {
 });
 
 browser.alarms.onAlarm.addListener((info) => {
-  // console.log("the alarm", store.getters.getElementFromUUID(info.name));
+  console.log("info", info);
   browser.notifications.create(info.name, {
     type: "basic",
     iconUrl: browser.extension.getURL("icons/48.png"),
     title: "Zoom Scheduler",
-    message:
-      store.getters.getElementFromUUID(info.name)[0].name +
-      ": Click to Join Meeting",
+    message: getElementFromUUID(info.name)[0].name + ": Click to Join Meeting",
   });
-  // console.log(info);
 });
+
+//Functions
+function getElementFromUUID(uuid) {
+  state = JSON.parse(ls.get("vuex"));
+  const data = state.data;
+  return data.filter((value) => value.uuid == uuid);
+}
+
+function getNearestDate(item) {
+  const end = false;
+  let date = new Date();
+  if (item.schedule.mode == "once") {
+    const year = item.schedule.date.split("-")[0],
+      month = item.schedule.date.split("-")[1],
+      day = item.schedule.date.split("-")[2];
+    date.setFullYear(year, parseInt(month) - 1, day);
+    date.setHours(item.schedule.startTime.split(":")[0]);
+    date.setMinutes(item.schedule.startTime.split(":")[1]);
+    date.setSeconds(0);
+  } else {
+    const today = new Date();
+
+    let leastDiff = 8,
+      nextDay;
+    for (const i of item.schedule.days) {
+      let diff = days[i.toLowerCase()] - today.getDay();
+      if (diff < 0) diff += 7;
+
+      if (diff == 0) {
+        const et = end ? item.schedule.endTime : item.schedule.startTime;
+        //Check Times
+        const current = today.toString().substr(16, 5);
+        if (et < current) {
+          diff += 7;
+        }
+      }
+
+      if (diff < leastDiff) {
+        leastDiff = diff;
+        nextDay = i;
+      }
+    }
+    date.setDate(date.getDate() + leastDiff);
+    date.setHours(item.schedule.startTime.split(":")[0]);
+    date.setMinutes(item.schedule.startTime.split(":")[1]);
+    date.setSeconds(0);
+  }
+  return date;
+}
+
+const days = {
+  sunday: 0,
+  monday: 1,
+  tuesday: 2,
+  wednesday: 3,
+  thursday: 4,
+  friday: 5,
+  saturday: 6,
+};
