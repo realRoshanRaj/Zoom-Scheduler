@@ -70,7 +70,7 @@
         :key="componentKey"
         :show-dialog="showDialog"
         :init-data="modifiedData(index)"
-        @updateShowDialog="closeEditDialog($event)"
+        @update-show-dialog="closeEditDialog($event)"
       />
     </v-card>
     <v-snackbar
