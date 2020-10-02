@@ -1,7 +1,7 @@
 {
   "manifest_version": 2,
-  "name": "Zoom Scheduler",
-  "description": "Helps you organize your Zoom Meetings or Zoom Classes",
+  "name": "Zoom Scheduler: Meeting Organizer",
+  "description": "Easily organize your Zoom Meetings or Zoom Classes all in one place",
   "default_locale": "en",
   "author": "Roshan R",
   "icons": {

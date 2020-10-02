@@ -8,7 +8,7 @@
         <v-spacer></v-spacer>
         <v-menu v-model="showMenu" offset-y>
           <template v-slot:activator="{ on, attrs }">
-            <v-btn icon v-bind="attrs" v-on="on">
+            <v-btn id="menu" icon v-bind="attrs" v-on="on">
               <v-icon color="white">mdi-menu</v-icon>
             </v-btn>
           </template>
@@ -56,6 +56,15 @@
                 </v-list-item-group>
               </v-list>
             </v-menu>
+
+            <v-divider />
+            <!--Start Walk-Through-->
+            <v-list-item @click="startTour">
+              <v-list-item-icon>
+                <v-icon>mdi-play</v-icon>
+              </v-list-item-icon>
+              <v-list-item-title>Start Walk-Through</v-list-item-title>
+            </v-list-item>
           </v-list>
         </v-menu>
       </v-app-bar>
@@ -77,7 +86,7 @@
             v-on="on"
             @click="addButton"
           >
-            <v-icon color="white">mdi-plus</v-icon>
+            <v-icon id="addBttn" color="white">mdi-plus</v-icon>
           </v-btn>
         </template>
         <span>Add</span>
@@ -95,6 +104,12 @@
         :dialog="showNotifDialog"
         @closeNotifDialog="closeNotifDialog($event)"
       />
+
+      <v-tour
+        name="appTour"
+        :steps="steps"
+        :callbacks="{ onFinish: onTourFinish, onSkip: onTourFinish }"
+      ></v-tour>
     </v-container>
   </v-app>
 </template>
@@ -117,6 +132,69 @@ export default {
     ],
     meetingData: {},
     showNotifDialog: false,
+    steps: [
+      {
+        target: "#logo",
+        content: "Start Walk-through",
+      },
+      {
+        target: "#logo",
+        content:
+          "<img src='Autofill.png' width='100%'> Autofill Zoom Meetings with URL",
+        params: {
+          placement: "top-start",
+        },
+      },
+      {
+        target: "#addBttn",
+        content: "Add Meetings by clicking here",
+        params: {
+          placement: "left",
+        },
+      },
+      {
+        target: "#menu",
+        content: "Open Menu for Notification and Sort Customization",
+        params: {
+          highlight: true,
+        },
+      },
+      {
+        target: "#notif0",
+        content: "Turn Individual Meeting Notifications On and Off",
+        params: {
+          highlight: true,
+        },
+      },
+      {
+        target: "#copy0",
+        content: "Copy the Link for the Zoom Meeting",
+        params: {
+          highlight: true,
+        },
+      },
+      {
+        target: "#join0",
+        content: "Button to instantly join the Zoom Meeting",
+        params: {
+          highlight: true,
+        },
+      },
+      {
+        target: "#edit0",
+        content: "Click to Edit Meeting Details",
+        params: {
+          highlight: true,
+        },
+      },
+      {
+        target: "#delete0",
+        content: "Click to Permanently Delete Meeting",
+        params: {
+          highlight: true,
+        },
+      },
+    ],
   }),
   async created() {
     await this.$store.dispatch("onStartup");
@@ -142,7 +220,11 @@ export default {
       }
     }
   },
-
+  mounted() {
+    if (this.$store.state.first) {
+      this.startTour();
+    }
+  },
   computed: {
     getSortModeIndex() {
       const x = this.$store.state.sortMode;
@@ -150,6 +232,13 @@ export default {
     },
   },
   methods: {
+    startTour() {
+      this.$store.dispatch("startTour");
+      this.$tours["appTour"].start();
+    },
+    onTourFinish() {
+      this.$store.dispatch("endTour");
+    },
     updateSort(value) {
       this.$store.dispatch("changeAndRefreshSort", {
         mode: value,

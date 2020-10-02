@@ -18,7 +18,7 @@
                 :disabled="$store.state.notificationTime <= 0"
                 @click="toggleNotification(index)"
               >
-                <v-icon>{{
+                <v-icon :id="'notif' + index">{{
                   item.notification ? "mdi-bell" : "mdi-bell-off"
                 }}</v-icon>
               </v-btn>
@@ -29,14 +29,19 @@
           <v-tooltip bottom>
             <template v-slot:activator="{ on, attrs }">
               <v-btn icon v-bind="attrs" v-on="on" @click="copyItem(item)">
-                <v-icon>mdi-content-copy</v-icon>
+                <v-icon :id="'copy' + index">mdi-content-copy</v-icon>
               </v-btn>
             </template>
             <span>Copy Zoom Link</span>
           </v-tooltip>
 
           <v-col class="mx-3">
-            <v-btn color="blue lighten-2" block @click="openZoom(item)">
+            <v-btn
+              :id="'join' + index"
+              color="blue lighten-2"
+              block
+              @click="openZoom(item)"
+            >
               Join Zoom
             </v-btn>
           </v-col>
@@ -44,7 +49,7 @@
           <v-tooltip bottom>
             <template v-slot:activator="{ on, attrs }">
               <v-btn icon v-bind="attrs" v-on="on" @click="editItem(index)">
-                <v-icon>mdi-pencil</v-icon>
+                <v-icon :id="'edit' + index">mdi-pencil</v-icon>
               </v-btn>
             </template>
             <span>Edit</span>
@@ -53,7 +58,7 @@
           <v-tooltip bottom>
             <template v-slot:activator="{ on, attrs }">
               <v-btn icon v-bind="attrs" v-on="on" @click="deleteItem(index)">
-                <v-icon>mdi-delete</v-icon>
+                <v-icon :id="'delete' + index">mdi-delete</v-icon>
               </v-btn>
             </template>
             <span>Delete</span>
@@ -82,7 +87,12 @@
     </v-snackbar>
     <!--    <div class="my-9"></div>-->
     <v-row justify="center" v-if="getData.length > 0">
-      <v-img src="../assets/logo.png" max-width="150" aspect-ratio="1"></v-img>
+      <v-img
+        id="logo"
+        src="../assets/logo.png"
+        max-width="150"
+        aspect-ratio="1"
+      ></v-img>
     </v-row>
   </v-container>
 </template>

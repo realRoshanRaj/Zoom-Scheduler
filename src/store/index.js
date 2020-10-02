@@ -25,6 +25,7 @@ export default new Vuex.Store({
     os: platform.os.family,
     sortMode: "Upcoming",
     notificationTime: 5,
+    first: true,
   },
   plugins: [
     createPersistedState({
@@ -50,6 +51,9 @@ export default new Vuex.Store({
     },
     changeSortMode(state, value) {
       state.sortMode = value;
+    },
+    updateFirst(state, value) {
+      state.first = value;
     },
     refreshSort(state) {
       //Refresh Sort
@@ -91,6 +95,30 @@ export default new Vuex.Store({
         if (!item.uuid) item.uuid = uuidv4();
         if (!item.notification) item.notification = true;
       });
+    },
+    startTour(store) {
+      if (store.state.data.length === 0) {
+        store.state.data = [
+          {
+            name: "Demo Meeting",
+            id: 123456789,
+            uuid: "0",
+            notification: true,
+            schedule: {
+              startTime: "12:00",
+              endTime: "13:00",
+              mode: "weekly",
+              days: ["Saturday", "Monday"],
+            },
+          },
+        ];
+      }
+    },
+    endTour(store) {
+      store.state.data = store.state.data.filter(
+        (element) => element.uuid != 0
+      );
+      store.commit("updateFirst", false);
     },
   },
   modules: {},

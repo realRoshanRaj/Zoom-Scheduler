@@ -4,8 +4,11 @@ import store from "../store";
 import vuetify from "../plugins/vuetify";
 import VueClipboard from "vue-clipboard2";
 import VuetifyConfirm from "vuetify-confirm";
+import VueTour from "vue-tour";
+import "vue-tour/dist/vue-tour.css";
 
 Vue.use(VueClipboard);
+Vue.use(VueTour);
 Vue.use(VuetifyConfirm, { vuetify, color: "warning" });
 
 /* eslint-disable no-new */
