@@ -1,5 +1,5 @@
 <template>
-  <v-dialog v-model="dialog" persistent>
+  <v-dialog v-model="isDialog" persistent>
     <v-card>
       <v-row justify="space-between" no-gutters>
         <v-col>
@@ -60,10 +60,13 @@ export default {
       }
       return false;
     },
+    isDialog() {
+      return this.dialog;
+    },
   },
   methods: {
     exit() {
-      this.$emit("closeNotifDialog", false);
+      this.$emit("close-notif-dialog", false);
     },
     async save() {
       this.$store.commit(

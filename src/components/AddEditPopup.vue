@@ -1,5 +1,5 @@
 <template>
-  <v-dialog v-model="showDialog" persistent>
+  <v-dialog v-model="isDialog" persistent>
     <v-card rounded>
       <v-row justify="space-between" no-gutters>
         <v-col>
@@ -260,6 +260,9 @@ export default {
     notification: true,
   }),
   computed: {
+    isDialog() {
+      return this.showDialog;
+    },
     saveDisabled() {
       return !(
         this.id &&
@@ -320,7 +323,7 @@ export default {
   },
   methods: {
     exit() {
-      this.$emit("updateShowDialog", false);
+      this.$emit("update-show-dialog", false);
     },
     clearFields() {
       this.name = null;

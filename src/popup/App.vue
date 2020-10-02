@@ -97,12 +97,12 @@
         add
         :init-data="meetingData"
         :key="addKey"
-        @updateShowDialog="updateShowDialog($event)"
+        @update-show-dialog="updateShowDialog($event)"
       />
 
       <Notifications
         :dialog="showNotifDialog"
-        @closeNotifDialog="closeNotifDialog($event)"
+        @close-notif-dialog="closeNotifDialog($event)"
       />
 
       <v-tour
@@ -140,7 +140,7 @@ export default {
       {
         target: "#logo",
         content:
-          "<img src='Autofill.png' width='100%'> Autofill Zoom Meetings with URL",
+          "<img src='/icons/Autofill.png' width='100%'> Autofill Zoom Meetings with URL",
         params: {
           placement: "top-start",
         },
