@@ -18,180 +18,217 @@
       </v-row>
       <v-divider />
       <v-window v-model="step">
-        <v-window-item :value="1">
-          <v-card-text class="pt-6">
-            <v-text-field
-              v-model="name"
-              label="Meeting Name"
-              dense
-              autofocus
-              outlined
-              required
-              :rules="[(v) => !!v || 'Name is required']"
-              shaped
-              clearable
-            >
-            </v-text-field>
-            <v-text-field
-              v-model="id"
-              label="Meeting ID"
-              dense
-              required
-              :rules="[(v) => !!v || 'Meeting ID is required']"
-              outlined
-              clearable
-              type="number"
-            >
-            </v-text-field>
-            <v-text-field
-              v-model="password"
-              label="Meeting Password (optional)"
-              dense
-              outlined
-              clearable
-            >
-            </v-text-field>
-            <v-text-field
-              v-model="username"
-              label="Your Meeting Username (optional)"
-              dense
-              outlined
-              clearable
-            >
-            </v-text-field>
-          </v-card-text>
-        </v-window-item>
+        <v-form v-model="formValid">
+          <v-window-item :value="1">
+            <v-card-text class="pt-6">
+              <v-text-field
+                v-model="name"
+                label="Meeting Name"
+                dense
+                autofocus
+                outlined
+                required
+                :rules="[(v) => !!v || 'Name is required']"
+                shaped
+                clearable
+              >
+              </v-text-field>
 
-        <v-window-item :value="2">
-          <v-card-text>
-            <v-menu
-              ref="menuS"
-              v-model="menuS"
-              :close-on-content-click="false"
-              :nudge-right="40"
-              :return-value.sync="startTime"
-              transition="scale-transition"
-              offset-y
-              max-width="290px"
-              min-width="290px"
-            >
-              <template v-slot:activator="{ on, attrs }">
+              <div>
+                <v-btn
+                  :color="isZoom ? 'green accent-2' : 'light-blue accent-1'"
+                  small
+                  block
+                  rounded
+                  @click="isZoom = !isZoom"
+                >
+                  {{
+                    isZoom
+                      ? "Click here to Enter Non-Zoom Meeting"
+                      : "Click here to Enter Zoom Meeting"
+                  }}
+                </v-btn>
+              </div>
+
+              <div
+                style="outline: #64b5f6 dashed medium; outline-offset: 5px"
+                class="mt-5"
+                v-if="isZoom"
+              >
                 <v-text-field
-                  v-model="formatStartTime"
-                  label="Start Time"
-                  outlined
+                  v-model="id"
+                  label="Meeting ID"
                   dense
-                  :rules="[(v) => !!v || 'start time is required']"
-                  prepend-icon="mdi-clock-outline"
-                  readonly
-                  v-bind="attrs"
-                  v-on="on"
-                ></v-text-field>
-              </template>
-              <v-time-picker
-                v-if="menuS"
-                v-model="startTime"
-                scrollable
-                @click:minute="$refs.menuS.save(startTime)"
-              ></v-time-picker>
-            </v-menu>
-
-            <v-menu
-              ref="menuE"
-              v-model="menuE"
-              :close-on-content-click="false"
-              :nudge-right="40"
-              :return-value.sync="endTime"
-              transition="scale-transition"
-              offset-y
-              max-width="290px"
-              min-width="290px"
-            >
-              <template v-slot:activator="{ on, attrs }">
-                <v-text-field
-                  v-model="formatEndTime"
-                  label="End Time"
+                  required
+                  :rules="[(v) => !!v || 'Meeting ID is required']"
                   outlined
-                  dense
-                  :rules="[(v) => !!v || 'end time is required']"
-                  prepend-icon="mdi-clock-time-seven-outline"
-                  readonly
-                  v-bind="attrs"
-                  v-on="on"
-                ></v-text-field>
-              </template>
-              <v-time-picker
-                v-if="menuE"
-                v-model="endTime"
-                scrollable
-                @click:minute="$refs.menuE.save(endTime)"
-              ></v-time-picker>
-            </v-menu>
-            <div class="text-subtitle-2">Occurrence</div>
-            <v-radio-group v-model="scheduleSelection" column>
-              <v-radio label="Once" value="once"></v-radio>
-              <v-radio
-                label="Every Day"
-                value="daily"
-                @click="weekdays = getDays.slice()"
-              ></v-radio>
-              <v-radio
-                label="Every Week"
-                value="weekly"
-                @click="weekdays = weekdays.length == 7 ? [] : weekdays"
-              ></v-radio>
-            </v-radio-group>
-
-            <v-menu
-              v-if="scheduleSelection == 'once'"
-              v-model="menuD"
-              :close-on-content-click="false"
-              :nudge-right="40"
-              transition="scale-transition"
-              offset-y
-              min-width="290px"
-            >
-              <template v-slot:activator="{ on, attrs }">
+                  clearable
+                  type="number"
+                >
+                </v-text-field>
                 <v-text-field
-                  v-model="computedDateFormatted"
-                  label="Select Date"
-                  prepend-icon="mdi-calendar"
-                  readonly
-                  :rules="[(v) => !!v || 'Date is required']"
-                  v-bind="attrs"
-                  v-on="on"
-                ></v-text-field>
-              </template>
-              <v-date-picker
-                v-model="date"
-                :min="getToday"
-                @input="menuD = false"
-              ></v-date-picker>
-            </v-menu>
+                  v-model="password"
+                  label="Meeting Password (optional)"
+                  dense
+                  outlined
+                  clearable
+                >
+                </v-text-field>
+                <v-text-field
+                  v-model="username"
+                  label="Your Meeting Username (optional)"
+                  dense
+                  outlined
+                  clearable
+                >
+                </v-text-field>
+              </div>
+              <div v-else class="mt-5">
+                <v-text-field
+                  v-model="link"
+                  autofocus
+                  label="Enter Your Meeting Link"
+                  :rules="[(v) => isLinkValid(v)]"
+                  dense
+                  outlined
+                  clearable
+                >
+                </v-text-field>
+              </div>
+            </v-card-text>
+          </v-window-item>
 
-            <v-select
-              v-else-if="scheduleSelection !== null"
-              v-model="weekdays"
-              multiple
-              small-chips
-              label="Select Day(s)"
-              :items="getDays"
-              @change="radioValidater"
-            >
-              <template v-slot:prepend-item>
-                <v-list-item ripple @click="toggle">
-                  <v-list-item-action>
-                    <v-icon>{{ getSelectAllIcon }}</v-icon>
-                  </v-list-item-action>
-                  <v-list-item-content>
-                    <v-list-item-title>Select All</v-list-item-title>
-                  </v-list-item-content>
-                </v-list-item>
-                <v-divider class="mt-2"></v-divider>
-              </template>
-            </v-select>
-          </v-card-text>
-        </v-window-item>
+          <v-window-item :value="2">
+            <v-card-text>
+              <v-menu
+                ref="menuS"
+                v-model="menuS"
+                :close-on-content-click="false"
+                :nudge-right="40"
+                :return-value.sync="startTime"
+                transition="scale-transition"
+                offset-y
+                max-width="290px"
+                min-width="290px"
+              >
+                <template v-slot:activator="{ on, attrs }">
+                  <v-text-field
+                    v-model="formatStartTime"
+                    label="Start Time"
+                    outlined
+                    dense
+                    :rules="[(v) => !!v || 'start time is required']"
+                    prepend-icon="mdi-clock-outline"
+                    readonly
+                    v-bind="attrs"
+                    v-on="on"
+                  ></v-text-field>
+                </template>
+                <v-time-picker
+                  v-if="menuS"
+                  v-model="startTime"
+                  scrollable
+                  @click:minute="$refs.menuS.save(startTime)"
+                ></v-time-picker>
+              </v-menu>
+
+              <v-menu
+                ref="menuE"
+                v-model="menuE"
+                :close-on-content-click="false"
+                :nudge-right="40"
+                :return-value.sync="endTime"
+                transition="scale-transition"
+                offset-y
+                max-width="290px"
+                min-width="290px"
+              >
+                <template v-slot:activator="{ on, attrs }">
+                  <v-text-field
+                    v-model="formatEndTime"
+                    label="End Time"
+                    outlined
+                    dense
+                    :rules="[(v) => !!v || 'end time is required']"
+                    prepend-icon="mdi-clock-time-seven-outline"
+                    readonly
+                    v-bind="attrs"
+                    v-on="on"
+                  ></v-text-field>
+                </template>
+                <v-time-picker
+                  v-if="menuE"
+                  v-model="endTime"
+                  scrollable
+                  @click:minute="$refs.menuE.save(endTime)"
+                ></v-time-picker>
+              </v-menu>
+              <div class="text-subtitle-2">Occurrence</div>
+              <v-radio-group v-model="scheduleSelection" column>
+                <v-radio label="Once" value="once"></v-radio>
+                <v-radio
+                  label="Every Day"
+                  value="daily"
+                  @click="weekdays = getDays.slice()"
+                ></v-radio>
+                <v-radio
+                  label="Every Week"
+                  value="weekly"
+                  @click="weekdays = weekdays.length == 7 ? [] : weekdays"
+                ></v-radio>
+              </v-radio-group>
+
+              <v-menu
+                v-if="scheduleSelection == 'once'"
+                v-model="menuD"
+                :close-on-content-click="false"
+                :nudge-right="40"
+                transition="scale-transition"
+                offset-y
+                min-width="290px"
+              >
+                <template v-slot:activator="{ on, attrs }">
+                  <v-text-field
+                    v-model="computedDateFormatted"
+                    label="Select Date"
+                    prepend-icon="mdi-calendar"
+                    readonly
+                    :rules="[(v) => !!v || 'Date is required']"
+                    v-bind="attrs"
+                    v-on="on"
+                  ></v-text-field>
+                </template>
+                <v-date-picker
+                  v-model="date"
+                  :min="getToday"
+                  @input="menuD = false"
+                ></v-date-picker>
+              </v-menu>
+
+              <v-select
+                v-else-if="scheduleSelection !== null"
+                v-model="weekdays"
+                multiple
+                small-chips
+                label="Select Day(s)"
+                :items="getDays"
+                @change="radioValidater"
+              >
+                <template v-slot:prepend-item>
+                  <v-list-item ripple @click="toggle">
+                    <v-list-item-action>
+                      <v-icon>{{ getSelectAllIcon }}</v-icon>
+                    </v-list-item-action>
+                    <v-list-item-content>
+                      <v-list-item-title>Select All</v-list-item-title>
+                    </v-list-item-content>
+                  </v-list-item>
+                  <v-divider class="mt-2"></v-divider>
+                </template>
+              </v-select>
+            </v-card-text>
+          </v-window-item>
+        </v-form>
       </v-window>
 
       <v-divider></v-divider>
@@ -243,10 +280,13 @@ export default {
     },
   },
   data: () => ({
+    formValid: false,
+    isZoom: true,
     name: null,
     id: null,
     password: null,
     username: null,
+    link: null,
     step: 1,
     scheduleSelection: null,
     menuS: false,
@@ -265,12 +305,13 @@ export default {
     },
     saveDisabled() {
       return !(
-        this.id &&
+        this.formValid &&
+        (this.isZoom ? this.id : this.link) &&
         this.name &&
         this.startTime &&
         this.endTime &&
         this.scheduleSelection &&
-        (this.date || this.weekdays)
+        (this.date || this.weekdays.length > 0)
       );
     },
     computedDateFormatted() {
@@ -304,7 +345,14 @@ export default {
   mounted() {
     if (Object.keys(this.initData).length) {
       this.name = this.initData.name;
-      this.id = this.initData.id;
+      if (this.initData.id) {
+        this.isZoom = true;
+        this.id = this.initData.id;
+      } else if (this.initData.link) {
+        this.isZoom = false;
+        this.link = this.initData.link;
+      }
+
       this.uuid = this.initData.uuid;
       this.notification = this.initData.notification;
       if (this.initData.pwd) this.password = this.initData.pwd;
@@ -322,6 +370,18 @@ export default {
     }
   },
   methods: {
+    isLinkValid(v) {
+      try {
+        // eslint-disable-next-line no-unused-vars
+        const url = new URL(v);
+        if (url.hostname.includes("zoom.us")) {
+          return "You must Enter this meeting as a Zoom Meeting";
+        }
+        return true;
+      } catch (e) {
+        return "Invalid URL";
+      }
+    },
     exit() {
       this.$emit("update-show-dialog", false);
     },
@@ -360,13 +420,18 @@ export default {
     addItem() {
       const itemData = {
         name: this.name,
-        id: this.id,
         uuid: uuidv4(),
         notification: true,
       };
       this.uuid = itemData.uuid;
-      if (this.password) itemData.pwd = this.password;
-      if (this.username) itemData.uname = this.username;
+      if (this.isZoom) {
+        itemData.id = this.id;
+        if (this.password) itemData.pwd = this.password;
+        if (this.username) itemData.uname = this.username;
+      } else {
+        itemData.link = this.link;
+      }
+
       const schedule = {
         startTime: this.startTime,
         endTime: this.endTime,
@@ -378,18 +443,21 @@ export default {
         schedule.days = this.weekdays;
       }
       itemData.schedule = schedule;
-      // console.log(itemData);
       this.$store.commit("addItem", itemData);
     },
     editItem(index) {
       const itemData = {
         name: this.name,
-        id: this.id,
         uuid: this.initData.uuid,
         notification: this.initData.notification,
       };
-      if (this.password) itemData.pwd = this.password;
-      if (this.username) itemData.uname = this.username;
+      if (this.isZoom) {
+        itemData.id = this.id;
+        if (this.password) itemData.pwd = this.password;
+        if (this.username) itemData.uname = this.username;
+      } else {
+        itemData.link = this.link;
+      }
       const schedule = {
         startTime: this.startTime,
         endTime: this.endTime,

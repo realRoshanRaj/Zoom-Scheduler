@@ -140,7 +140,7 @@ export default {
       {
         target: "#logo",
         content:
-          "<img src='/icons/Autofill.png' width='100%'> Autofill Zoom Meetings with URL",
+          "<img src='/icons/Autofill.png' width='100%'> Autofill Zoom Meetings with URL by <strong> navigating to the tab with the URL open, and opening the extension <strong/>",
         params: {
           placement: "top-start",
         },

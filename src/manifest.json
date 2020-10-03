@@ -1,27 +1,28 @@
 {
-  "manifest_version": 2,
-  "name": "Zoom Scheduler: Meeting Organizer",
-  "description": "Easily organize your Zoom Meetings or Zoom Classes all in one place",
-  "default_locale": "en",
-  "author": "Roshan R",
-  "icons": {
-    "16": "icons/16.png",
-    "48": "icons/48.png",
-    "128": "icons/128.png"
-  },
-  "permissions": ["activeTab", "notifications", "alarms"],
-  "background": {
-    "scripts": [
-      "js/background.js"
-    ],
-    "persistent": true
-  },
-  "browser_action": {
-    "default_popup": "popup.html",
-    "default_title": "Zoom Scheduler",
-    "default_icon": {
-      "19": "icons/19.png",
-      "38": "icons/38.png"
+    "manifest_version": 2,
+    "name": "Zoom Scheduler: Meeting Organizer",
+    "short_name": "Zoom Scheduler",
+    "description": "Easily organize your Zoom Meetings or Zoom Classes all in one place",
+    "default_locale": "en",
+    "author": "Roshan R",
+    "icons": {
+        "16": "icons/16.png",
+        "48": "icons/48.png",
+        "128": "icons/128.png"
+    },
+    "permissions": ["activeTab", "notifications", "alarms"],
+    "background": {
+        "scripts": [
+            "js/background.js"
+        ],
+        "persistent": true
+    },
+    "browser_action": {
+        "default_popup": "popup.html",
+        "default_title": "Zoom Scheduler",
+        "default_icon": {
+            "19": "icons/19.png",
+            "38": "icons/38.png"
+        }
     }
-  }
 }

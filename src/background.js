@@ -33,14 +33,20 @@ browser.notifications.onClicked.addListener((info) => {
 
   const os = state.os;
   let url;
-  if (os.toLowerCase() == "windows" || os.toLowerCase() == "macos") {
-    url = `zoommtg://zoom.us/join?confno=${
-      item.id +
-      (item.pwd ? "&pwd=" + item.pwd : "") +
-      (item.uname ? "&uname=" + item.uname : "")
-    }`;
-  } else {
-    url = `https://zoom.us/j/${item.id + (item.pwd ? "?pwd=" + item.pwd : "")}`;
+  if (item.id) {
+    if (os.toLowerCase() == "windows" || os.toLowerCase() == "macos") {
+      url = `zoommtg://zoom.us/join?confno=${
+        item.id +
+        (item.pwd ? "&pwd=" + item.pwd : "") +
+        (item.uname ? "&uname=" + item.uname : "")
+      }`;
+    } else {
+      url = `https://zoom.us/j/${
+        item.id + (item.pwd ? "?pwd=" + item.pwd : "")
+      }`;
+    }
+  } else if (item.link) {
+    url = item.link;
   }
 
   browser.tabs.create({ url });

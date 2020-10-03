@@ -40,9 +40,9 @@
               :id="'join' + index"
               color="blue lighten-2"
               block
-              @click="openZoom(item)"
+              @click="openLink(item)"
             >
-              Join Zoom
+              Join Meeting
             </v-btn>
           </v-col>
 
@@ -111,19 +111,23 @@ export default {
     snackColor: "",
   }),
   methods: {
-    openZoom(item) {
+    openLink(item) {
       const os = this.$store.state.os;
       let url;
-      if (os.toLowerCase() == "windows" || os.toLowerCase() == "macos") {
-        url = `zoommtg://zoom.us/join?confno=${
-          item.id +
-          (item.pwd ? "&pwd=" + item.pwd : "") +
-          (item.uname ? "&uname=" + item.uname : "")
-        }`;
-      } else {
-        url = `https://zoom.us/j/${
-          item.id + (item.pwd ? "?pwd=" + item.pwd : "")
-        }`;
+      if (item.id) {
+        if (os.toLowerCase() == "windows" || os.toLowerCase() == "macos") {
+          url = `zoommtg://zoom.us/join?confno=${
+            item.id +
+            (item.pwd ? "&pwd=" + item.pwd : "") +
+            (item.uname ? "&uname=" + item.uname : "")
+          }`;
+        } else {
+          url = `https://zoom.us/j/${
+            item.id + (item.pwd ? "?pwd=" + item.pwd : "")
+          }`;
+        }
+      } else if (item.link) {
+        url = item.link;
       }
       // console.log(url);
       browser.tabs.create({ url });
