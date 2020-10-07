@@ -32,7 +32,7 @@
                 <v-icon :id="'copy' + index">mdi-content-copy</v-icon>
               </v-btn>
             </template>
-            <span>Copy Zoom Link</span>
+            <span>Copy Meeting Link</span>
           </v-tooltip>
 
           <v-col class="mx-3">
@@ -142,10 +142,14 @@ export default {
       }
     },
     copyItem(item) {
-      // eslint-disable-next-line no-unused-vars
-      const url = `https://zoom.us/j/${
-        item.id + (item.pwd ? "?pwd=" + item.pwd : "")
-      }`;
+      let url;
+      if (item.id) {
+        url = `https://zoom.us/j/${
+          item.id + (item.pwd ? "?pwd=" + item.pwd : "")
+        }`;
+      } else if (item.link) {
+        url = item.link;
+      }
       try {
         this.$copyText(url);
         this.message = "Copy Successful";

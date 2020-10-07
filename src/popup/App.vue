@@ -168,14 +168,14 @@ export default {
       },
       {
         target: "#copy0",
-        content: "Copy the Link for the Zoom Meeting",
+        content: "Copy the Link for Your Meeting",
         params: {
           highlight: true,
         },
       },
       {
         target: "#join0",
-        content: "Button to instantly join the Zoom Meeting",
+        content: "Button to instantly join the Your Meeting",
         params: {
           highlight: true,
         },

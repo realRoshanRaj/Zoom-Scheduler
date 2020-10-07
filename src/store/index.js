@@ -93,7 +93,7 @@ export default new Vuex.Store({
       store.commit("refreshSort");
       store.state.data.forEach((item) => {
         if (!item.uuid) item.uuid = uuidv4();
-        if (!item.notification) item.notification = true;
+        if (item.notification === null) item.notification = true;
       });
     },
     startTour(store) {
