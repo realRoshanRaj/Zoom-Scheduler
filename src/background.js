@@ -2,6 +2,7 @@
 import SecureLS from "secure-ls";
 const ls = new SecureLS();
 let state = JSON.parse(ls.get("vuex"));
+
 browser.runtime.onMessage.addListener(async function (
   request,
   sender,

@@ -204,6 +204,7 @@ export default {
     });
     if (tabs.length > 0) {
       const url = tabs[0].url;
+
       const currURL = new URL(url);
       if (currURL.hostname.includes("zoom.us")) {
         const res = await this.$confirm(
