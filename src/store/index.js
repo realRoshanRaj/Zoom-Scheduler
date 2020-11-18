@@ -26,6 +26,7 @@ export default new Vuex.Store({
     sortMode: "Upcoming",
     notificationTime: 5,
     first: true,
+    updateAvailable: false,
   },
   plugins: [
     createPersistedState({
@@ -68,6 +69,9 @@ export default new Vuex.Store({
           );
         }
       }
+    },
+    setUpdateAvailable(state, value) {
+      state.updateAvailable = value;
     },
     updateNotificationTime(state, value) {
       state.notificationTime = value;

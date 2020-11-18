@@ -9,7 +9,14 @@
         <v-menu v-model="showMenu" offset-y>
           <template v-slot:activator="{ on, attrs }">
             <v-btn id="menu" icon v-bind="attrs" v-on="on">
-              <v-icon color="white">mdi-menu</v-icon>
+              <v-badge
+                overlap
+                color="red"
+                dot
+                :value="$store.state.updateAvailable"
+              >
+                <v-icon color="white">mdi-menu</v-icon>
+              </v-badge>
             </v-btn>
           </template>
 
@@ -59,12 +66,50 @@
 
             <v-divider />
             <!--Start Walk-Through-->
-            <v-list-item @click="startTour">
-              <v-list-item-icon>
-                <v-icon>mdi-play</v-icon>
-              </v-list-item-icon>
-              <v-list-item-title>Start Walk-Through</v-list-item-title>
-            </v-list-item>
+            <v-menu
+              offset-x
+              left
+              open-on-hover
+              transition="scroll-x-reverse-transition"
+            >
+              <template v-slot:activator="{ on, attrs }">
+                <v-list-item v-bind="attrs" v-on="on">
+                  <v-list-item-icon>
+                    <v-badge
+                      overlap
+                      color="red"
+                      dot
+                      :value="$store.state.updateAvailable"
+                    >
+                      <v-icon>mdi-help</v-icon>
+                    </v-badge>
+                  </v-list-item-icon>
+                  <v-list-item-title>Help</v-list-item-title>
+                  <v-icon right>mdi-chevron-right</v-icon>
+                </v-list-item>
+              </template>
+              <v-list>
+                <v-list-item @click="startTour">
+                  <v-list-item-icon>
+                    <v-icon>mdi-play</v-icon>
+                  </v-list-item-icon>
+                  <v-list-item-title>Start Walkthrough</v-list-item-title>
+                </v-list-item>
+                <v-list-item @click="reloadApp">
+                  <v-list-item-icon>
+                    <v-badge
+                      overlap
+                      color="red"
+                      dot
+                      :value="$store.state.updateAvailable"
+                    >
+                      <v-icon>mdi-reload</v-icon>
+                    </v-badge>
+                  </v-list-item-icon>
+                  <v-list-item-title>Reload</v-list-item-title>
+                </v-list-item>
+              </v-list>
+            </v-menu>
           </v-list>
         </v-menu>
       </v-app-bar>
@@ -110,6 +155,19 @@
         :steps="steps"
         :callbacks="{ onFinish: onTourFinish, onSkip: onTourFinish }"
       ></v-tour>
+
+      <v-dialog v-model="loadingDialog" hide-overlay persistent width="300">
+        <v-card color="primary" dark>
+          <v-card-text>
+            Please stand by
+            <v-progress-linear
+              indeterminate
+              color="white"
+              class="mb-0"
+            ></v-progress-linear>
+          </v-card-text>
+        </v-card>
+      </v-dialog>
     </v-container>
   </v-app>
 </template>
@@ -123,6 +181,7 @@ export default {
   components: { Notifications, AddEditPopup, ItemList },
   data: () => ({
     showAddDialog: false,
+    loadingDialog: false,
     fab: false,
     addKey: 0,
     showMenu: false,
@@ -234,6 +293,7 @@ export default {
   },
   methods: {
     startTour() {
+      this.showMenu = false;
       this.$store.dispatch("startTour");
       this.$tours["appTour"].start();
     },
@@ -245,6 +305,11 @@ export default {
         mode: value,
       });
       this.showMenu = false;
+    },
+    reloadApp() {
+      this.showMenu = false;
+      this.$store.commit("setUpdateAvailable", false);
+      browser.runtime.reload();
     },
     updateShowDialog(showDialog) {
       this.showAddDialog = showDialog;

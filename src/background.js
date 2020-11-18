@@ -62,6 +62,13 @@ browser.alarms.onAlarm.addListener((info) => {
   });
 });
 
+browser.runtime.onUpdateAvailable.addListener((details) => {
+  console.log("details", details);
+  state = JSON.parse(ls.get("vuex"));
+  state.updateAvailable = true;
+  ls.set("vuex", JSON.stringify(state));
+});
+
 //Functions
 function getElementFromUUID(uuid) {
   state = JSON.parse(ls.get("vuex"));
