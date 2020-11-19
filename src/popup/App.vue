@@ -1,7 +1,7 @@
 <template>
   <v-app>
     <nav>
-      <v-app-bar dense color="blue">
+      <v-app-bar dense color="mainBlue">
         <v-toolbar-title
           ><span class="white--text">Zoom Scheduler</span></v-toolbar-title
         >
@@ -128,7 +128,7 @@
         open-on-hover
       >
         <template v-slot:activator>
-          <v-btn v-model="fab" color="blue" dark fab>
+          <v-btn v-model="fab" color="mainBlue" dark fab>
             <v-icon v-if="fab">mdi-close</v-icon>
             <v-icon v-else id="addBttn">mdi-plus</v-icon>
           </v-btn>
@@ -138,7 +138,7 @@
             <v-btn
               fab
               small
-              color="blue lighten-1"
+              color="secondaryBlue"
               v-bind="attrs"
               v-on="on"
               @click="addButton('zoom')"
@@ -153,7 +153,7 @@
             <v-btn
               fab
               small
-              color="blue lighten-1"
+              color="secondaryBlue"
               v-bind="attrs"
               v-on="on"
               @click="addButton('link')"
@@ -287,6 +287,7 @@ export default {
   }),
   async created() {
     await this.$store.dispatch("onStartup");
+    this.$vuetify.theme.dark = this.$store.state.darkTheme;
     const tabs = await browser.tabs.query({
       active: true,
       lastFocusedWindow: true,

@@ -27,6 +27,7 @@ export default new Vuex.Store({
     notificationTime: 5,
     first: true,
     updateAvailable: false,
+    darkTheme: false,
   },
   plugins: [
     createPersistedState({
@@ -78,6 +79,9 @@ export default new Vuex.Store({
     },
     toggleNotification(state, index) {
       state.data[index].notification = !state.data[index].notification;
+    },
+    toggleDarkTheme(state) {
+      state.darkTheme = !state.darkTheme;
     },
   },
   getters: {

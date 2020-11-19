@@ -38,7 +38,7 @@
           <v-col class="mx-3">
             <v-btn
               :id="'join' + index"
-              color="blue lighten-2"
+              color="secondaryBlue"
               block
               @click="openLink(item)"
             >
@@ -92,6 +92,7 @@
         src="../assets/logo.png"
         max-width="150"
         aspect-ratio="1"
+        @dblclick="switchTheme"
       ></v-img>
     </v-row>
   </v-container>
@@ -185,6 +186,10 @@ export default {
       } else {
         await browser.alarms.clear(this.$store.state.data[index].uuid);
       }
+    },
+    switchTheme() {
+      this.$store.commit("toggleDarkTheme");
+      this.$vuetify.theme.dark = this.$store.state.darkTheme;
     },
   },
   computed: {
