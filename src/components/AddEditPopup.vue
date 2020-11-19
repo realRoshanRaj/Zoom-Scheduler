@@ -4,10 +4,18 @@
       <v-row justify="space-between" no-gutters>
         <v-col>
           <v-card-title class="text-h5" v-if="add">
-            {{ step == 1 ? "Add Meeting" : "Add Meeting (Schedule)" }}
+            {{
+              step == 1
+                ? `Add ${isZoom ? "Zoom" : ""} Meeting`
+                : `Add ${isZoom ? "Zoom" : ""} Meeting (Schedule)`
+            }}
           </v-card-title>
           <v-card-title class="text-h5" v-else>
-            {{ step == 1 ? "Edit Meeting" : "Edit Meeting (Schedule)" }}
+            {{
+              step == 1
+                ? `Edit ${isZoom ? "Zoom" : ""} Meeting`
+                : `Edit ${isZoom ? "Zoom" : ""} Meeting (Schedule)`
+            }}
           </v-card-title>
         </v-col>
         <v-col cols="1" class="mt-3">
@@ -34,7 +42,7 @@
               >
               </v-text-field>
 
-              <div>
+              <!--<div>
                 <v-btn
                   :color="isZoom ? 'green accent-2' : 'light-blue accent-1'"
                   small
@@ -48,13 +56,9 @@
                       : "Click here to Enter Zoom Meeting"
                   }}
                 </v-btn>
-              </div>
+              </div>-->
 
-              <div
-                style="outline: #64b5f6 dashed medium; outline-offset: 5px"
-                class="mt-5"
-                v-if="isZoom"
-              >
+              <div v-if="isZoom">
                 <v-text-field
                   v-model="id"
                   label="Meeting ID"
@@ -83,10 +87,9 @@
                 >
                 </v-text-field>
               </div>
-              <div v-else class="mt-5">
+              <div v-else>
                 <v-text-field
                   v-model="link"
-                  autofocus
                   label="Enter Your Meeting Link"
                   :rules="[(v) => isLinkValid(v)]"
                   dense
@@ -234,14 +237,14 @@
       <v-divider></v-divider>
 
       <v-card-actions class="py-3">
-        <v-tooltip right v-if="step == 1">
-          <template v-slot:activator="{ on, attrs }">
-            <v-btn icon v-bind="attrs" v-on="on" @click="clearFields">
-              <v-icon>mdi-delete</v-icon>
-            </v-btn>
-          </template>
-          <span>Clear All Fields</span>
-        </v-tooltip>
+        <!--        <v-tooltip right v-if="step == 1">-->
+        <!--          <template v-slot:activator="{ on, attrs }">-->
+        <!--            <v-btn icon v-bind="attrs" v-on="on" @click="clearFields">-->
+        <!--              <v-icon>mdi-delete</v-icon>-->
+        <!--            </v-btn>-->
+        <!--          </template>-->
+        <!--          <span>Clear All Fields</span>-->
+        <!--        </v-tooltip>-->
         <v-spacer></v-spacer>
         <v-btn
           :disabled="step == 1"
@@ -271,6 +274,7 @@ export default {
   name: "AddEditPopup",
   props: {
     add: { type: Boolean, default: false },
+    zoom: { type: Boolean, default: true },
     showDialog: { type: Boolean, default: false },
     initData: {
       type: Object,
@@ -367,6 +371,8 @@ export default {
         if (this.initData.schedule.date)
           this.date = this.initData.schedule.date;
       }
+    } else {
+      this.isZoom = this.zoom;
     }
   },
   methods: {

@@ -119,29 +119,58 @@
         <ItemList />
       </v-row>
 
-      <v-tooltip left>
-        <template v-slot:activator="{ on, attrs }">
-          <v-btn
-            fab
-            fixed
-            bottom
-            right
-            color="blue lighten-1"
-            v-bind="attrs"
-            v-on="on"
-            @click="addButton"
-          >
-            <v-icon id="addBttn" color="white">mdi-plus</v-icon>
+      <v-speed-dial
+        v-model="fab"
+        bottom
+        right
+        fixed
+        direction="top"
+        open-on-hover
+      >
+        <template v-slot:activator>
+          <v-btn v-model="fab" color="blue" dark fab>
+            <v-icon v-if="fab">mdi-close</v-icon>
+            <v-icon v-else id="addBttn">mdi-plus</v-icon>
           </v-btn>
         </template>
-        <span>Add</span>
-      </v-tooltip>
+        <v-tooltip left>
+          <template v-slot:activator="{ on, attrs }">
+            <v-btn
+              fab
+              small
+              color="blue lighten-1"
+              v-bind="attrs"
+              v-on="on"
+              @click="addButton('zoom')"
+            >
+              <v-icon color="white">mdi-video</v-icon>
+            </v-btn>
+          </template>
+          <span>Add Zoom Meeting</span>
+        </v-tooltip>
+        <v-tooltip left>
+          <template v-slot:activator="{ on, attrs }">
+            <v-btn
+              fab
+              small
+              color="blue lighten-1"
+              v-bind="attrs"
+              v-on="on"
+              @click="addButton('link')"
+            >
+              <v-icon color="white">mdi-link-variant</v-icon>
+            </v-btn>
+          </template>
+          <span>Add Meeting Link</span>
+        </v-tooltip>
+      </v-speed-dial>
 
       <AddEditPopup
         :show-dialog="showAddDialog"
         add
         :init-data="meetingData"
         :key="addKey"
+        :zoom="isZoom"
         @update-show-dialog="updateShowDialog($event)"
       />
 
@@ -191,6 +220,7 @@ export default {
     ],
     meetingData: {},
     showNotifDialog: false,
+    isZoom: true,
     steps: [
       {
         target: "#logo",
@@ -318,7 +348,12 @@ export default {
     closeNotifDialog(dialog) {
       this.showNotifDialog = dialog;
     },
-    addButton() {
+    addButton(type) {
+      if (type === "zoom") {
+        this.isZoom = true;
+      } else {
+        this.isZoom = false;
+      }
       this.addKey++;
       this.showAddDialog = !this.showAddDialog;
     },
