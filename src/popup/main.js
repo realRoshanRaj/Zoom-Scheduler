@@ -6,8 +6,10 @@ import VueClipboard from "vue-clipboard2";
 import VuetifyConfirm from "vuetify-confirm";
 import VueTour from "vue-tour";
 import "vue-tour/dist/vue-tour.css";
+import VueConfetti from "vue-confetti";
 
 Vue.use(VueClipboard);
+Vue.use(VueConfetti);
 Vue.use(VueTour);
 Vue.use(VuetifyConfirm, { vuetify, color: "warning" });
 

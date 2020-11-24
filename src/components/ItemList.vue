@@ -39,6 +39,7 @@
             <v-btn
               :id="'join' + index"
               color="secondaryBlue"
+              class="font-weight-medium"
               block
               @click="openLink(item)"
             >
@@ -187,9 +188,16 @@ export default {
         await browser.alarms.clear(this.$store.state.data[index].uuid);
       }
     },
-    switchTheme() {
+    async switchTheme() {
+      this.$confetti.start({
+        particles: [{ type: "rect" }],
+        defaultDropRate: 15,
+        windSpeedMax: 0,
+      });
       this.$store.commit("toggleDarkTheme");
       this.$vuetify.theme.dark = this.$store.state.darkTheme;
+      await new Promise((res) => setTimeout(res, 1000));
+      this.$confetti.stop();
     },
   },
   computed: {

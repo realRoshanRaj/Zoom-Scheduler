@@ -328,8 +328,11 @@ export default {
       this.$store.dispatch("startTour");
       this.$tours["appTour"].start();
     },
-    onTourFinish() {
-      this.$store.dispatch("endTour");
+    async onTourFinish() {
+      this.$confetti.start();
+      await this.$store.dispatch("endTour");
+      await new Promise((res) => setTimeout(res, 2000));
+      this.$confetti.stop();
     },
     updateSort(value) {
       this.$store.dispatch("changeAndRefreshSort", {
